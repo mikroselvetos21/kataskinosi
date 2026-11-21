@@ -292,9 +292,6 @@ footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;heig
 .artlink:hover{text-decoration:underline}
 @media (max-width:900px){.artgrid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:560px){.artgrid{grid-template-columns:1fr}}
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
-.reveal.vis{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
 .view:not(#v-egrafes)>section:first-of-type>.wrap>*:not(.reveal),.view:not(#v-egrafes) .hero2,.reel,.metbar{opacity:0;animation:pageIn .7s ease forwards}
 .reel{animation-delay:.1s}.hero2{animation-delay:.15s}
 @keyframes pageIn{to{opacity:1}}
@@ -304,9 +301,11 @@ footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;heig
 .track .card{flex:0 0 100%;scroll-snap-align:start}
 .track .card .ph{width:100%;aspect-ratio:auto;height:95vh;object-fit:cover;border-radius:0}
 .track .card .ph:not(img){aspect-ratio:16/9;height:95vh}
-.reel{position:relative}
-.reel::before{content:"";position:absolute;left:0;right:0;top:-1px;height:30px;z-index:2;pointer-events:none;content:"";position:absolute;left:0;right:0;top:-1px;height:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 30' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' d='M0 0H1440V15C1320 30 1200 30 1080 15S840 0 720 15S480 30 360 15S120 0 0 15Z'/%3E%3C/svg%3E") center top/100% 100% no-repeat;pointer-events:none;z-index:1}
-.reel::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:30px;z-index:2;pointer-events:none;content:"";position:absolute;left:0;right:0;bottom:-1px;height:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 30' preserveAspectRatio='none'%3E%3Cpath fill='%23FFFFFF' d='M0 30H1440V15C1320 0 1200 0 1080 15S840 30 720 15S480 0 360 15S120 30 0 15Z'/%3E%3C/svg%3E") center bottom/100% 100% no-repeat;pointer-events:none}
+.fade{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.fade.in{opacity:1;transform:none}
+#v-egrafes .fade{opacity:1!important;transform:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.fade{opacity:1;transform:none;transition:none}}
+.artcard{transition:border-color .2s,transform .2s;cursor:pointer}.artcard:hover,.artcard:focus-visible{border-color:var(--sea-d);transform:translateY(-3px)}
 </style>
 </head>
 <body>
@@ -336,7 +335,7 @@ footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;heig
 <form id="cf" novalidate>
 <label>Ονοματεπώνυμο *<input type="text" name="name" required autocomplete="name"></label>
 <label>Email *<input type="email" name="email" required autocomplete="email"></label>
-<label>Τηλέφωνο<input type="tel" name="phone" autocomplete="tel"></label>
+<label>Τηλέφωνο *<input type="tel" name="phone" required autocomplete="tel" pattern="\d{10}" inputmode="numeric"></label>
 <label>Θέμα<input type="text" name="subject"></label>
 <label>Μήνυμα *<textarea name="msg" rows="5" required></textarea></label>
 <label class="chk"><input type="checkbox" name="ok" required><span>Συναινώ στην επεξεργασία των στοιχείων μου για την απάντηση στο μήνυμά μου, σύμφωνα με την <a href="#gdpr" data-go>Πολιτική Προστασίας Προσωπικών Δεδομένων</a>. *</span></label>
@@ -422,11 +421,11 @@ x.addEventListener('click',shut);
 tm.addEventListener('click',function(e){if(e.target===tm)shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&tm.classList.contains('on'))shut()})}
 })();
-(function(){var f=document.getElementById('cf');if(!f)return;var TO='fanouris.xintaropoulos@gmail.com',HOOK='https://discord.com/api/webhooks/1565881037471612948/nHN263PzvjiTnpYIjJAfmn8ACGfARc9ZTXI1tdsikzZKijc2JFnwNx6i3e82ETR-Lyp8';
+(function(){var f=document.getElementById('cf');if(!f)return;var TO='fanouris.xintaropoulos@gmail.com';
 var msg=document.getElementById('fmsg');
 var t0=0,LK='cf_last',WAIT=300000;function start(){if(!t0)t0=Date.now()}f.addEventListener('focusin',start);f.addEventListener('input',start);
 f.addEventListener('submit',async function(e){e.preventDefault();var ok=true;
-[].slice.call(f.querySelectorAll('[required]')).forEach(function(el){var bad=el.type==='checkbox'?!el.checked:!el.value.trim();if(el.type==='email'&&el.value&&!/^\S+@\S+\.\S+$/.test(el.value))bad=true;el.classList.toggle('bad',bad);if(bad)ok=false});
+[].slice.call(f.querySelectorAll('[required]')).forEach(function(el){var bad=el.type==='checkbox'?!el.checked:!el.value.trim();if(el.type==='email'&&el.value&&!/^\S+@\S+\.\S+$/.test(el.value))bad=true;if(el.name==='phone'&&el.value&&!/^\d{10}$/.test(el.value.replace(/\s/g,'')))bad=true;el.classList.toggle('bad',bad);if(bad)ok=false});
 if(!ok){msg.style.color='#c00000';msg.textContent='Παρακαλούμε συμπληρώστε τα πεδία με αστερίσκο (*) και αποδεχθείτε τη συγκατάθεση.';return}
 if(f.elements.botcheck&&f.elements.botcheck.checked)return;
 if(!t0||Date.now()-t0<3000){msg.style.color='#c00000';msg.textContent='Παρακαλούμε δοκιμάστε ξανά σε λίγα δευτερόλεπτα.';return}
@@ -437,7 +436,6 @@ btn.disabled=true;msg.style.color='var(--ink)';msg.textContent='Αποστολή
 try{
 var okSend=false;
 try{var r1=await fetch('https://formsubmit.co/ajax/'+TO,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_subject:subj,_captcha:'false',_template:'table',name:v('name'),email:v('email'),phone:v('phone'),message:v('msg')})});var d1=await r1.json();okSend=!!d1&&(d1.success===true||d1.success==='true')}catch(e1){}
-try{var r2=await fetch(HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'Φόρμα Κατασκήνωσης',allowed_mentions:{parse:[]},embeds:[{title:subj.slice(0,250),color:745098,fields:[{name:'Ονοματεπώνυμο',value:v('name').slice(0,200)},{name:'Email',value:v('email').slice(0,200)},{name:'Τηλέφωνο',value:(v('phone')||'-').slice(0,100)},{name:'Μήνυμα',value:v('msg').slice(0,1000)}]}]})});if(r2.ok)okSend=true}catch(e2){}
 if(okSend){try{localStorage.setItem(LK,String(Date.now()))}catch(e3){}t0=0;f.reset();msg.style.color='#1a7a3a';msg.textContent='Το μήνυμά σας εστάλη. Σας ευχαριστούμε!';btn.disabled=false;return}
 throw new Error('fail')
 }catch(err){
@@ -459,12 +457,6 @@ if(window.ResizeObserver){new ResizeObserver(init).observe(t)}else{init()}
 t.addEventListener('scroll',function(){clearTimeout(tm);tm=setTimeout(function(){if(!ready)return;var x=t.scrollLeft;if(x<setW-2){jump(x+setW)}else if(x>=2*setW-2){jump(x-setW)}},120)},{passive:true});
 });
 })();
-(function(){
-var io=window.IntersectionObserver&&new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('vis');io.unobserve(x.target)}})},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
-if(!io)return;
-function tag(){document.querySelectorAll('.kblock,.ktext,.kmedia,.artcard,.whycard,.stf-row,.q,.reg h3,.reg h4,.reg .notice,.reg ul,.hero2,.namesec .nametxt,.msgsec .msg3,.msgsec .msg-mid,.msg-c.photo,.kslide,.carw,.gal,.alertbar,.reel,.section').forEach(function(el){if(!el.classList.contains('reveal')&&!el.closest('.reveal')){el.classList.add('reveal');io.observe(el)}})}
-tag();if(window.MutationObserver){new MutationObserver(tag).observe(document.body,{childList:true,subtree:true})}
-})();
 (function(){var t=document.getElementById('reel');if(!t)return;var items=[].slice.call(t.children),n=items.length;if(n<2)return;
 var pre=items.map(function(e){var c=e.cloneNode(true);c.setAttribute('aria-hidden','true');return c}),post=items.map(function(e){var c=e.cloneNode(true);c.setAttribute('aria-hidden','true');return c}),ready=false,setW=0,step=0,tm;
 pre.forEach(function(c){t.insertBefore(c,items[0])});post.forEach(function(c){t.appendChild(c)});
@@ -474,6 +466,18 @@ function init(){if(!t.clientWidth)return;step=pos(items[1])-pos(items[0]);setW=p
 if(window.ResizeObserver){new ResizeObserver(init).observe(t)}else{init()}
 t.addEventListener('scroll',function(){clearTimeout(tm);tm=setTimeout(function(){if(!ready)return;var x=t.scrollLeft;if(x<setW-2)jump(x+setW);else if(x>=2*setW-2)jump(x-setW)},120)},{passive:true});
 document.querySelectorAll('[data-reel]').forEach(function(b){b.addEventListener('click',function(){var d=Number(b.dataset.reel),mx=t.scrollWidth-t.clientWidth;if(d>0&&t.scrollLeft>=mx-4)t.scrollTo({left:0,behavior:'smooth'});else if(d<0&&t.scrollLeft<=4)t.scrollTo({left:mx,behavior:'smooth'});else t.scrollBy({left:d*(t.clientWidth),behavior:'smooth'})})});
+})();
+(function(){
+var io=window.IntersectionObserver&&new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting)x.target.classList.add('in')})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+if(!io)return;
+function tag(root){[].slice.call((root||document).querySelectorAll('section>.wrap>*,section>.wrap>.kblock,section>.wrap>.artgrid>.artcard,section>.wrap>.whygrid>.whycard,.hero2,.reel,.namesec .nametxt,.msgsec .msg3,.msgsec .msg-mid,.msg-c.photo,.carw,.stf-row,.alertbar,.q')).forEach(function(el){if(!el.classList.contains('fade')){el.classList.add('fade');io.observe(el)}})}
+function reset(root){[].slice.call((root||document).querySelectorAll('.fade')).forEach(function(el){el.classList.remove('in','fade');io.unobserve(el)});tag(root)}
+var views=document.querySelectorAll('.view');
+var cur=null;
+function show(id){var v=document.getElementById('v-'+(id||'arxiki'))||document.getElementById('v-arxiki');if(cur===v)return;cur=v;reset(v);tag(v)}
+var orig=document.querySelectorAll('[data-go]');orig&&orig.forEach&&orig.forEach(function(a){a.addEventListener('click',function(){var t=(a.getAttribute('href')||'').slice(1);setTimeout(function(){show(t)},30)})});
+window.addEventListener('hashchange',function(){show(location.hash.slice(1))});
+tag();show(location.hash.slice(1));
 })();
 </script>
 </body>
