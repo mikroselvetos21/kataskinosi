@@ -630,6 +630,7 @@ footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;heig
 .tmpf{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}
 .tmpf>svg,.pmph.tmpf::before,.pmph.tmpf::after{display:none!important}
 .pmgrid .pmph.tmpf,.artgrid .artimg.tmpf{transition:transform .5s ease}
+.cform .fsend .btn.wait{opacity:.6;cursor:not-allowed;font-variant-numeric:tabular-nums}
 /* ===== Footer: το κλασικό ζεστό κρεμ-ροζ, χρυσές λεπτομέρειες, σιλουέτα του Φαρμακά με τα έλατα ===== */
 footer.site-f{--f1:#faf7f2;--f2:#f6efe5;--fc:#16323a;--fm:#3f5d66;--fl:rgba(22,50,58,.12);margin-top:0;color:var(--fc);font-size:.95rem;line-height:1.6;text-align:left;background:radial-gradient(70% 55% at 50% 112%,rgba(255,197,49,.16),transparent 70%),linear-gradient(180deg,var(--f1),var(--f2))}
 footer.site-f .wrap{position:relative;z-index:1;max-width:1200px}
@@ -830,13 +831,18 @@ var PLABEL={agoria:'Περίοδος αγοριών',koritsia:'Περίοδος 
 [].slice.call(f.querySelectorAll('textarea.grow')).forEach(function(t){function fit(){t.style.height='auto';t.style.height=t.scrollHeight+2+'px'}t.addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault()});t.addEventListener('input',function(){if(/\s/.test(t.value)){var p=t.selectionStart,o=t.value.length;t.value=t.value.replace(/\s+/g,'');p-=o-t.value.length;t.setSelectionRange(p,p)}fit()});window.addEventListener('resize',fit);f.addEventListener('reset',function(){setTimeout(fit,0)});document.addEventListener('viewshow',function(){setTimeout(fit,0)});fit()});
 f.addEventListener('change',function(e){if(e.target.name==='period'){var fs=f.querySelector('.seg');if(fs)fs.classList.remove('bad')}});
 var msg=document.getElementById('fmsg');
-var t0=0,LK='cf_last',WAIT=300000;function start(){if(!t0)t0=Date.now()}f.addEventListener('focusin',start);f.addEventListener('input',start);
+var t0=0,LK='cf_last',WAIT=30000;function start(){if(!t0)t0=Date.now()}
+/* Μετά από κάθε αποστολή, νέο μήνυμα μπορεί να σταλεί μετά από 30 δευτερόλεπτα· το κουμπί δείχνει την αντίστροφη μέτρηση */
+var SB=f.querySelector('button[type=submit]'),SBH=SB.innerHTML,lastSent=0,ct=null;try{lastSent=Number(localStorage.getItem(LK)||0)}catch(e0){}
+function left(){return Math.max(0,WAIT-(Date.now()-lastSent))}
+function cool(){clearInterval(ct);function tick(){var r=Math.ceil(left()/1000);if(r>0){SB.disabled=true;SB.classList.add('wait');SB.textContent='Νέα αποστολή σε '+r+' δευτ.'}else{clearInterval(ct);SB.disabled=false;SB.classList.remove('wait');SB.innerHTML=SBH}}tick();if(left()>0)ct=setInterval(tick,1000)}
+cool();f.addEventListener('focusin',start);f.addEventListener('input',start);
 f.addEventListener('submit',async function(e){e.preventDefault();var ok=true;
 [].slice.call(f.querySelectorAll('[required]')).forEach(function(el){if(el.type==='radio'){var none=!f.querySelector('input[name="'+el.name+'"]:checked');var fs=el.closest('.seg');if(fs)fs.classList.toggle('bad',none);if(none)ok=false;return}var bad=el.type==='checkbox'?!el.checked:!el.value.trim();if(el.name==='email'&&el.value&&!/^\S+@\S+\.\S+$/.test(el.value.trim()))bad=true;if(el.name==='phone'&&el.value&&!/^\d{10}$/.test(el.value.replace(/\s/g,'')))bad=true;el.classList.toggle('bad',bad);if(bad)ok=false});
 if(!ok){msg.style.color='#c00000';msg.textContent='Παρακαλούμε επιλέξτε περίοδο, συμπληρώστε τα πεδία με αστερίσκο (*) και αποδεχθείτε τη συγκατάθεση.';return}
 if(f.elements.botcheck&&f.elements.botcheck.checked)return;
 if(!t0||Date.now()-t0<3000){msg.style.color='#c00000';msg.textContent='Παρακαλούμε δοκιμάστε ξανά σε λίγα δευτερόλεπτα.';return}
-try{var last=Number(localStorage.getItem(LK)||0);if(last&&Date.now()-last<WAIT){var mins=Math.ceil((WAIT-(Date.now()-last))/60000);msg.style.color='#c00000';msg.textContent='Έχετε ήδη στείλει μήνυμα. Μπορείτε να στείλετε νέο σε '+mins+(mins===1?' λεπτό.':' λεπτά.');return}}catch(e0){}
+if(left()>0){msg.style.color='#c00000';msg.textContent='Μπορείτε να στείλετε νέο μήνυμα σε '+Math.ceil(left()/1000)+' δευτερόλεπτα.';return}
 var v=function(n){return f.elements[n].value.trim()},btn=f.querySelector('button[type=submit]');
 var per=(f.querySelector('input[name=period]:checked')||{}).value||'geniko',PL=PLABEL[per];
 var TOS=per==='geniko'?[INBOX.agoria,INBOX.koritsia]:[INBOX[per]];
@@ -847,7 +853,7 @@ var okSend=false;
 var payload=JSON.stringify({_subject:subj,_captcha:'false',_template:'table',period:PL,name:v('name'),email:v('email'),phone:v('phone'),message:v('msg')});
 var res=await Promise.all(TOS.map(function(to){return fetch('https://formsubmit.co/ajax/'+to,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:payload}).then(function(r){return r.json()}).then(function(d){return !!d&&(d.success===true||d.success==='true')}).catch(function(){return false})}));
 okSend=res.some(Boolean);
-if(okSend){try{localStorage.setItem(LK,String(Date.now()))}catch(e3){}t0=0;f.reset();msg.style.color='#1a7a3a';msg.textContent='Το μήνυμά σας εστάλη. Σας ευχαριστούμε!';btn.disabled=false;return}
+if(okSend){lastSent=Date.now();try{localStorage.setItem(LK,String(lastSent))}catch(e3){}t0=0;f.reset();msg.style.color='#1a7a3a';msg.textContent='Το μήνυμά σας εστάλη. Σας ευχαριστούμε!';cool();return}
 throw new Error('fail')
 }catch(err){
 var body='Αφορά: '+PL+'\nΟνοματεπώνυμο: '+v('name')+'\nEmail: '+v('email')+'\nΤηλέφωνο: '+v('phone')+'\n\n'+v('msg');
