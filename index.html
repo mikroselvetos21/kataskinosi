@@ -709,7 +709,7 @@ html.mopen{overflow:hidden}html.mopen .top{z-index:1000}
 .pcover{display:block;width:100%;max-height:520px;margin:0 0 28px;border-radius:20px;object-fit:cover;background:var(--line);cursor:zoom-in}
 .pbody{color:var(--ink)}
 .view .pbody p,.pbody li{max-width:none;margin:0 0 16px;text-align:left;font-size:1.05rem;line-height:1.75}
-.pbody ul{margin:0 0 16px;padding-left:1.4em}.view .pbody li{margin:0 0 8px}
+.pbody ul,.pbody ol{margin:0 0 16px;padding-left:1.4em}.pbody u{text-decoration:underline;text-underline-offset:3px}.pbody em{font-style:italic}.view .pbody li{margin:0 0 8px}
 .view .pbody h3{margin:30px 0 12px;text-align:left;color:var(--sea-d)}.view .pbody h3::after{display:none}
 .pbody a{color:var(--sea-d);text-decoration:underline;text-underline-offset:3px;word-break:break-word}
 .view .post h3.pgal-h{margin:34px 0 4px;text-align:left;color:var(--ink);font-size:1.15rem}.view .post h3.pgal-h::after{display:none}
@@ -1041,10 +1041,40 @@ function ph(p,t){return 'photos/'+encodeURIComponent(p.f)+(t?'_t':'')+'.'+(p.x||
 function fmt(d){try{var x=d.split('-');return new Intl.DateTimeFormat('el-GR',{day:'numeric',month:'long',year:'numeric'}).format(new Date(+x[0],+x[1]-1,+x[2]))}catch(e){return d}}
 function inl(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)»])/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/([\w.+-]+@[\w-]+\.[\w.-]+\w)/g,'<a href="mailto:$1">$1</a>')}
 function md(t){return String(t||'').replace(/\r/g,'').split(/\n\s*\n/).map(function(b){b=b.trim();if(!b)return '';var L=b.split('\n');if(L.every(function(l){return /^\s*[-•]\s+/.test(l)}))return '<ul>'+L.map(function(l){return '<li>'+inl(l.replace(/^\s*[-•]\s+/,''))+'</li>'}).join('')+'</ul>';if(/^##\s+/.test(b))return '<h3>'+inl(b.replace(/^##\s+/,''))+'</h3>';return '<p>'+L.map(inl).join('<br>')+'</p>'}).join('')}
+/* Κείμενο με μορφοποίηση από το εργαλείο: επιτρέπονται μόνο ασφαλή στοιχεία */
+function sanitize(html){
+ var doc=new DOMParser().parseFromString('<div>'+(html||'')+'</div>','text/html'),root=doc.body.firstChild,out=document.createElement('div');
+ var MAP={B:'STRONG',STRONG:'STRONG',I:'EM',EM:'EM',U:'U',P:'P',DIV:'P',H1:'H3',H2:'H3',H3:'H3',H4:'H3',H5:'H3',H6:'H3',UL:'UL',OL:'OL',LI:'LI',A:'A',BR:'BR'},BLOCK={P:1,H3:1,UL:1,OL:1};
+ function walk(src,dst){[].slice.call(src.childNodes).forEach(function(n){
+  if(n.nodeType===3){dst.appendChild(document.createTextNode(n.nodeValue));return}
+  if(n.nodeType!==1||/^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|IMG|SVG|VIDEO|AUDIO|FORM|INPUT|BUTTON|TEXTAREA|SELECT)$/.test(n.tagName))return;
+  var tg=MAP[n.tagName];
+  if(!tg){var st=n.getAttribute('style')||'',w=dst;
+   if(/font-weight:\s*(bold|[6-9]00)/i.test(st)){var e1=document.createElement('strong');w.appendChild(e1);w=e1}
+   if(/font-style:\s*italic/i.test(st)){var e2=document.createElement('em');w.appendChild(e2);w=e2}
+   if(/text-decoration[^;]*underline/i.test(st)){var e3=document.createElement('u');w.appendChild(e3);w=e3}
+   walk(n,w);return}
+  var e=document.createElement(tg);
+  if(tg==='A'){var h=(n.getAttribute('href')||'').trim();if(!/^(https?:|mailto:|tel:)/i.test(h)){walk(n,dst);return}e.setAttribute('href',h);if(/^https?:/i.test(h)){e.setAttribute('target','_blank');e.setAttribute('rel','noopener')}}
+  walk(n,e);dst.appendChild(e)})}
+ walk(root,out);
+ var fin=document.createElement('div'),cur=null;
+ [].slice.call(out.childNodes).forEach(function(n){if(n.nodeType===1&&BLOCK[n.tagName]){cur=null;fin.appendChild(n)}else{if(!cur){if(n.nodeType===3&&!n.nodeValue.trim())return;if(n.nodeName==='BR')return;cur=document.createElement('p');fin.appendChild(cur)}cur.appendChild(n)}});
+ [].slice.call(fin.querySelectorAll('p p,p h3,p ul,p ol,li p,li h3,h3 p,h3 h3')).forEach(function(x){var p=x.parentNode;if(!p)return;while(x.firstChild)p.insertBefore(x.firstChild,x);p.removeChild(x)});
+ [].slice.call(fin.querySelectorAll('li')).forEach(function(li){var pr=li.parentNode;if(pr&&pr.tagName!=='UL'&&pr.tagName!=='OL'){var ul=document.createElement('ul');pr.insertBefore(ul,li);ul.appendChild(li)}});
+ [].slice.call(fin.querySelectorAll('p,h3,li,ul,ol,strong,em,u')).reverse().forEach(function(x){if(!x.textContent.replace(/[\s ]/g,''))x.parentNode.removeChild(x)});
+ var tw=document.createTreeWalker(fin,NodeFilter.SHOW_TEXT),L=[],t;while((t=tw.nextNode()))if(!(t.parentNode.closest&&t.parentNode.closest('a')))L.push(t);
+ L.forEach(function(t){var s=t.nodeValue,re=/(https?:\/\/[^\s<]+[^\s<.,;:!?)»"])|([\w.+-]+@[\w-]+\.[\w.-]+\w)/g,m,last=0,hit=0,f=document.createDocumentFragment();
+  while((m=re.exec(s))){hit=1;f.appendChild(document.createTextNode(s.slice(last,m.index)));var a=document.createElement('a');a.textContent=m[0];if(m[1]){a.setAttribute('href',m[0]);a.setAttribute('target','_blank');a.setAttribute('rel','noopener')}else a.setAttribute('href','mailto:'+m[0]);f.appendChild(a);last=re.lastIndex}
+  if(hit){f.appendChild(document.createTextNode(s.slice(last)));t.parentNode.replaceChild(f,t)}});
+ return fin.innerHTML.replace(/ /g,' ').replace(/(<br>\s*)+(<\/(p|li|h3)>)/g,'$2');
+}
+
+function exh(h){var d=new DOMParser().parseFromString(h||'','text/html'),P=[].slice.call(d.querySelectorAll('p')).map(function(p){return p.textContent}).join(' ');return P||d.body.textContent||''}
 function ex(t){var bl=String(t||'').replace(/\r/g,'').split(/\n\s*\n/),pp=bl.filter(function(b){b=b.trim();return b&&!/^##\s/.test(b)&&!b.split('\n').every(function(l){return /^\s*[-•]\s+/.test(l)})});var x=(pp.length?pp:bl).join(' ').replace(/\*\*/g,'').replace(/^##\s+/gm,'').replace(/^\s*[-•]\s+/gm,'').replace(/\s+/g,' ').trim();if(x.length>170){x=x.slice(0,170);x=x.slice(0,x.lastIndexOf(' ')>100?x.lastIndexOf(' '):170).replace(/[,.;:·\s]+$/,'')+'…'}return x}
 function tcls(t){return t==='Ανακοίνωση'?' t-an':t==='Άρθρο'?' t-ar':''}
 function th(p){return '<button type="button" class="th"><img src="'+ph(p,1)+'" data-full="'+ph(p)+'" alt="'+esc(p.alt||'')+'" loading="lazy" decoding="async"></button>'}
-function card(a){var p=(a.photos||[])[0];return '<article class="artcard live" data-type="'+esc(a.type)+'"><div class="artimg">'+(p?'<img src="'+ph(p,1)+'" alt="" loading="lazy" decoding="async">':PIC)+'<span class="arttag">'+esc(a.type)+'</span></div><div class="artbody"><p class="artdate">'+CAL+esc(fmt(a.date))+'</p><h3><a class="artlnk" href="#arthro-'+a.id+'" data-go>'+esc(a.title)+'</a></h3><p class="arttext">'+esc(ex(a.text))+'</p></div></article>'}
+function card(a){var p=(a.photos||[])[0],X=a.html!=null?exh(a.html):a.text;return '<article class="artcard live" data-type="'+esc(a.type)+'"><div class="artimg">'+(p?'<img src="'+ph(p,1)+'" alt="" loading="lazy" decoding="async">':PIC)+'<span class="arttag">'+esc(a.type)+'</span></div><div class="artbody"><p class="artdate">'+CAL+esc(fmt(a.date))+'</p><h3><a class="artlnk" href="#arthro-'+a.id+'" data-go>'+esc(a.title)+'</a></h3><p class="arttext">'+esc(ex(X))+'</p></div></article>'}
 function news(){
  if(!A.length)return; /* χωρίς άρθρα μένουν οι ενδεικτικές κάρτες */
  var list=A.filter(function(a){return filt==='Όλα'||a.type===filt});
@@ -1062,7 +1092,7 @@ function article(id){
  var P=a.photos||[],cover=P[0],gal=P.slice(1);
  var h='<p class="pmeta"><span class="arttag'+tcls(a.type)+'">'+esc(a.type)+'</span><time datetime="'+esc(a.date)+'">'+esc(fmt(a.date))+'</time></p><h1 class="ptitle">'+esc(a.title)+'</h1>';
  if(cover)h+='<div class="album pone" hidden>'+[cover].concat(gal).map(th).join('')+'</div><img class="pcover" src="'+ph(cover)+'" alt="'+esc(cover.alt||'')+'">';
- h+='<div class="pbody">'+md(a.text)+'</div>';
+ h+='<div class="pbody">'+(a.html!=null?sanitize(a.html):md(a.text))+'</div>';
  if(gal.length)h+='<h3 class="pgal-h">Φωτογραφίες</h3><div class="album">'+gal.map(th).join('')+'</div>';
  if((a.files||[]).length)h+='<div class="pfiles">'+a.files.map(function(f){return '<a class="docbtn" href="files/'+encodeURIComponent(f.f)+'" target="_blank" rel="noopener" download="'+esc(f.n)+'.pdf">'+DL+esc(f.n)+' (PDF)</a>'}).join('')+'</div>';
  post.innerHTML=h;window.scrollTo(0,0);
