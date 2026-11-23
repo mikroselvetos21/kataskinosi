@@ -115,7 +115,8 @@ details.how ol{margin:10px 0 0;padding-left:1.3em}details.how li{margin:0 0 6px}
 .inst[hidden],.inst .btn[hidden]{display:none}
 .inst img{width:44px;height:44px;border-radius:11px;flex:none}
 .inst .it{display:flex;gap:12px;align-items:center;flex:1 1 240px;min-width:0}
-.inst b{display:block}.inst span{display:block;color:var(--muted);font-size:.9rem}
+.inst .it>div>b{display:block}.inst span{display:block;color:var(--muted);font-size:.9rem}
+.instl{text-align:center;margin:28px 0 0}.instl button{background:none;border:0;padding:10px 4px;color:var(--sea);font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .inst .ib{display:flex;gap:8px;margin-left:auto}
 @supports (padding:max(0px)){
  .top{padding-top:calc(14px + env(safe-area-inset-top));padding-left:max(clamp(16px,4vw,40px),env(safe-area-inset-left));padding-right:max(clamp(16px,4vw,40px),env(safe-area-inset-right))}
@@ -190,6 +191,7 @@ details.how ol{margin:10px 0 0;padding-left:1.3em}details.how li{margin:0 0 6px}
  <div id="donebox" class="done" hidden></div>
  <div class="alt" id="tplbox"><p class="hint" style="margin:0 0 8px">Σας έστειλαν νέο index.html με αλλαγές στο σχέδιο ή στα σταθερά κείμενα; Περάστε το από εδώ, ώστε να <b>κρατηθούν οι αναρτήσεις</b>:</p><label class="btn sm">Ενημέρωση σχεδίου (νέο index.html)<input type="file" id="tpl" accept=".html,text/html" hidden></label></div>
 </section>
+<p id="instLink" class="instl" hidden><button type="button">📲 Βάλτε τη Διαχείριση στο κινητό σας σαν εφαρμογή</button></p>
 </main>
 
 <div class="savebar" id="savebar" hidden><span id="chg">Δεν υπάρχουν αλλαγές</span><button type="button" class="btn sun" id="save" disabled>Αποθήκευση του site (ZIP)</button></div>
@@ -460,16 +462,26 @@ $('#save').addEventListener('click',function(){
  var web=location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1';
  if(web&&'serviceWorker' in navigator)navigator.serviceWorker.register('diaxeirisi-sw.js',{scope:'./diaxeirisi'}).catch(function(){});
  var app=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
- var touch=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
- var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
- var no=false;try{no=localStorage.getItem('thavor_inst_x')==='1'}catch(e){}
- var box=$('#inst'),ev=null;
- if(!web||app||no||!touch)return;
- if(ios){$('#instTxt').innerHTML='Πατήστε <b style="display:inline">Κοινοποίηση</b> (το τετράγωνο με το βέλος ⬆︎) και μετά <b style="display:inline">«Προσθήκη στην οικ. οθόνη»</b>.';box.hidden=false}
- window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();ev=e;$('#instGo').hidden=false;box.hidden=false});
- $('#instGo').addEventListener('click',function(){if(!ev)return;ev.prompt();ev.userChoice.then(function(r){ev=null;if(r&&r.outcome==='accepted')box.hidden=true},function(){})});
- window.addEventListener('appinstalled',function(){$('#instTxt').textContent='Έτοιμο! Θα τη βρείτε στην οθόνη του κινητού σας, με το όνομα «Διαχείριση».';$('#instGo').hidden=true;$('#instX').textContent='Κλείσιμο';box.hidden=false});
- $('#instX').addEventListener('click',function(){box.hidden=true;try{localStorage.setItem('thavor_inst_x','1')}catch(e){}});
+ var touch=window.matchMedia&&matchMedia('(pointer: coarse)').matches,ua=navigator.userAgent;
+ var ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),sam=/SamsungBrowser/i.test(ua),android=/Android/i.test(ua);
+ var box=$('#inst'),go=$('#instGo'),txt=$('#instTxt'),x=$('#instX'),ev=null,no=false;
+ try{no=localStorage.getItem('thavor_inst_x')==='1'}catch(e){}
+ if(!web||app)return;
+ /* οδηγίες για όταν ο browser δεν δίνει κουμπί εγκατάστασης */
+ function manual(){return ios?'Πατήστε <b>Κοινοποίηση</b> (το τετράγωνο με το βέλος ⬆︎) και μετά <b>«Προσθήκη στην οικ. οθόνη»</b>.'
+  :sam?'Πατήστε το μενού <b>☰</b> (κάτω δεξιά) → <b>«Προσθήκη σελίδας σε»</b> → <b>«Αρχική οθόνη»</b>.'
+  :android?'Πατήστε το μενού <b>⋮</b> (πάνω δεξιά) → <b>«Εγκατάσταση εφαρμογής»</b> ή <b>«Προσθήκη στην αρχική οθόνη»</b>.'
+  :'Από το μενού του browser επιλέξτε <b>«Εγκατάσταση»</b> ή <b>«Προσθήκη στην αρχική οθόνη»</b>.'}
+ function withBtn(){go.hidden=false;txt.textContent='Θα ανοίγει από την οθόνη σας σαν εφαρμογή, σε πλήρη οθόνη.'}
+ function withHelp(){go.hidden=true;txt.innerHTML=manual()}
+ function show(){if(ev)withBtn();else withHelp();x.textContent='Όχι, ευχαριστώ';x.removeAttribute('data-done');box.hidden=false}
+ if(touch){$('#instLink').hidden=false;if(ios&&!no)show()}
+ window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();ev=e;if(!box.hidden)withBtn();else if(touch&&!no)show()});
+ go.addEventListener('click',function(){if(!ev){withHelp();return}var e=ev;ev=null;e.prompt();e.userChoice.then(function(r){if(r&&r.outcome==='accepted')box.hidden=true;else withHelp()},withHelp)});
+ window.addEventListener('appinstalled',function(){ev=null;go.hidden=true;txt.textContent='Έτοιμο! Θα τη βρείτε στην οθόνη του κινητού σας, με το όνομα «Διαχείριση».';x.textContent='Κλείσιμο';x.setAttribute('data-done','1');box.hidden=false});
+ x.addEventListener('click',function(){box.hidden=true;if(x.hasAttribute('data-done'))return;try{localStorage.setItem('thavor_inst_x','1')}catch(e){}});
+ /* ο σύνδεσμος στο κάτω μέρος φέρνει πάντα πίσω τη δυνατότητα, ακόμη κι αν πατήθηκε «Όχι, ευχαριστώ» ή σβήστηκε η εφαρμογή */
+ $('#instLink button').addEventListener('click',function(){try{localStorage.removeItem('thavor_inst_x')}catch(e){}show();window.scrollTo({top:0,behavior:'smooth'})});
 })();
 })();
 </script>
