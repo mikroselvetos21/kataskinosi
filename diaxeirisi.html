@@ -475,7 +475,7 @@ function cards(have,B){var up=[],keep={'sitemap.xml':1},te=new TextEncoder();
  .then(function(){return {up:up,keep:keep}})}
 function shareUrl(a){return siteBase()+'nea/'+a.id+'.html'}
 function publish(btn,again){
- var R=refs(),html='',base='',tree=null,step=0,total=0;
+ var R=refs(),html='',base='',tree=null,step=0,total=0,miss=[];
  function say(t){btn.textContent=t}
  say('Έλεγχος…');
  api('git/ref/heads/'+GH.branch).then(function(r){if(r.object.sha===GH.head)return api('git/commits/'+GH.head);
@@ -489,6 +489,8 @@ function publish(btn,again){
   var have={};(t.tree||[]).forEach(function(x){if(x.type==='blob')have[x.path]=x.sha});
   return (have['CNAME']?api('contents/CNAME?ref='+GH.head,{raw:1}).then(function(c){GH.base=cnameBase(c)},function(){}):Promise.resolve(GH.base='')).then(function(){say('Κάρτες κοινοποίησης…');return cards(have,siteBase())}).then(function(K){
   html=buildIndex();
+  /* έλεγχος: αρχεία που χρειάζεται το σχέδιο (π.χ. το έντυπο ιατρού) και δεν υπάρχουν στο GitHub */
+  html.replace(/(?:href|src)="(?:\.\/)?([^"#?:\/][^"#?:]*\.(?:pdf|jpe?g|png|webp|svg))"/gi,function(_,f){if(!/^(photos|files|nea)\//.test(f)&&!have[f]&&miss.indexOf(f)<0)miss.push(f);return _});
   var up=[{path:'index.html',get:function(){return Promise.resolve(new TextEncoder().encode(html))}}].concat(K.up);
   Object.keys(R).forEach(function(path){if(have[path])return;var m=path.match(/^photos\/(.+?)(_t)?\.(\w+)$/);
    if(m&&newImg[m[1]])up.push({path:path,get:function(){return bytes(m[2]?newImg[m[1]].t:newImg[m[1]].b)}});
@@ -502,7 +504,7 @@ function publish(btn,again){
  .then(function(c){return api('git/refs/heads/'+GH.branch,{method:'PATCH',body:{sha:c.sha,force:false}}).then(function(){return c})})
  .then(function(c){GH.head=c.sha;indexText=html;C0=clone(C);tplNew=false;newImg={};newPdf={};dirty=0;stats();btn.textContent=SAVE_LBL.gh;renderAll();
   var site=siteBase();
-  var box=$('#donebox');box.className='done';box.hidden=false;box.innerHTML='<b>Δημοσιεύτηκε!'+(again?' (μαζί με αλλαγές που είχε κάνει άλλος στο μεταξύ)':'')+'</b><p style="margin:6px 0 0">Συνήθως σε 1–2 λεπτά οι αλλαγές φαίνονται στο site: <a href="'+site+'#nea" target="_blank" rel="noopener">άνοιγμα του site ↗</a>. Αν δεν τις δείτε, ανανεώστε τη σελίδα σε λίγα λεπτά.</p>';box.scrollIntoView({behavior:'smooth',block:'nearest'})})
+  var box=$('#donebox');box.className='done';box.hidden=false;box.innerHTML='<b>Δημοσιεύτηκε!'+(again?' (μαζί με αλλαγές που είχε κάνει άλλος στο μεταξύ)':'')+'</b><p style="margin:6px 0 0">Συνήθως σε 1–2 λεπτά οι αλλαγές φαίνονται στο site: <a href="'+site+'#nea" target="_blank" rel="noopener">άνοιγμα του site ↗</a>. Αν δεν τις δείτε, ανανεώστε τη σελίδα σε λίγα λεπτά.</p>'+(miss.length?'<p style="margin:10px 0 0;color:#9a3412"><b>Προσοχή:</b> το site χρειάζεται '+(miss.length===1?'ένα αρχείο που δεν υπάρχει':'αρχεία που δεν υπάρχουν')+' στο GitHub: '+miss.map(esc).join(', ')+'. Ανεβάστε '+(miss.length===1?'το':'τα')+' στο GitHub με «Add file → Upload files».</p>':'');box.scrollIntoView({behavior:'smooth',block:'nearest'})})
  .catch(function(e){if(e.retry){publish(btn,true);return}btn.disabled=false;btn.textContent=SAVE_LBL.gh;var box=$('#donebox');box.className='done bad';box.hidden=false;
   box.innerHTML='<b>Η δημοσίευση δεν έγινε.</b><p style="margin:6px 0 0">'+esc(ghErr(e))+(e.status===409||e.status===422?' Οι αλλαγές σας είναι ακόμη εδώ. Πατήστε ξανά «Δημοσίευση στο site» σε λίγο.':'')+'</p>';box.scrollIntoView({behavior:'smooth',block:'nearest'})});
 }
