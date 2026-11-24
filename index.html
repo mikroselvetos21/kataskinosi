@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Κατασκήνωση Ιεράς Μητροπόλεως Αργολίδος Θαβώρ</title>
+<title>Κατασκήνωση Ι.Μ. Αργολίδος ΘΑΒΩΡ</title>
 <!-- Εμφάνιση όταν ο σύνδεσμος μοιράζεται (Viber, WhatsApp, Messenger, Facebook) και στο Google.
      Η εικόνα og-image.jpg ανεβαίνει ΔΙΠΛΑ στο index.html. Αν αλλάξει η διεύθυνση του site, αλλάξτε το https://mikroselvetos21.github.io/kataskinosi/ στις γραμμές og:url και og:image. -->
 <meta name="description" content="Η Κατασκήνωση «ΘΑΒΩΡ» της Ιεράς Μητροπόλεως Αργολίδος, στις πλαγιές του όρους Φαρμακά, στα 1.050 μέτρα. Οδηγίες εγγραφής, κατασκηνωτικές περίοδοι, στελέχη και επικοινωνία.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="el_GR">
-<meta property="og:site_name" content="Κατασκήνωση «ΘΑΒΩΡ»">
-<meta property="og:title" content="Κατασκήνωση «ΘΑΒΩΡ» · Ιερά Μητρόπολη Αργολίδος">
+<meta property="og:site_name" content="Κατασκήνωση Ι.Μ. Αργολίδος ΘΑΒΩΡ">
+<meta property="og:title" content="Κατασκήνωση Ι.Μ. Αργολίδος ΘΑΒΩΡ">
 <meta property="og:description" content="Στις πλαγιές του όρους Φαρμακά, στα 1.050 μέτρα, όπου κάθε παιδί παίζοντας μαθαίνει τη ζωή.">
 <meta property="og:url" content="https://mikroselvetos21.github.io/kataskinosi/">
 <meta property="og:image" content="https://mikroselvetos21.github.io/kataskinosi/og-image.jpg">
@@ -1136,7 +1136,7 @@ function news(){
 function article(id){
  var a=A.find(function(x){return String(x.id)===String(id)});
  if(!a){document.title=T0;post.innerHTML='<div class="nstate"><b>Το άρθρο δεν βρέθηκε.</b>Ίσως έχει αφαιρεθεί. <a href="#nea" data-go>Όλα τα νέα</a></div>';return}
- document.title=a.title+' · Κατασκήνωση «ΘΑΒΩΡ»';
+ document.title=a.title+' · Κατασκήνωση Ι.Μ. Αργολίδος ΘΑΒΩΡ';
  var P=a.photos||[],cover=P[0],gal=P.slice(1);
  var h='<p class="pmeta"><span class="arttag'+tcls(a.type)+'">'+esc(a.type)+'</span><time datetime="'+esc(a.date)+'">'+esc(fmt(a.date))+'</time></p><h1 class="ptitle">'+esc(a.title)+'</h1>';
  if(cover)h+='<div class="album pone" hidden>'+[cover].concat(gal).map(th).join('')+'</div><img class="pcover" src="'+ph(cover)+'" alt="'+esc(cover.alt||'')+'">';
