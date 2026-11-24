@@ -731,7 +731,8 @@ html.mopen{overflow:hidden}html.mopen .top{z-index:1000}
 .vgate small{position:relative;max-width:34ch;font-size:.8rem;line-height:1.4;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.55)}
 .artimg .vbadge{position:absolute;right:12px;bottom:12px;z-index:1;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.94);color:var(--sea-d);box-shadow:0 4px 14px rgba(22,50,58,.2)}
 .artimg .vbadge svg{width:16px;height:16px;margin-left:2px;opacity:1;transform:none}
-@media (max-width:600px){.vgate .vp{width:60px;height:60px}.vgate .vp svg{width:26px;height:26px}.vgate small{display:none}}
+@media (max-width:600px){.vgate .vp{width:60px;height:60px}.vgate .vp svg{width:26px;height:26px}.vgate small{display:none}.vgate.vext small{display:block}}
+a.vgate{text-decoration:none}
 .view .nstate{max-width:560px;margin:8px auto 0;padding:40px 26px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed #c9d9dc;border-radius:22px}
 .view .nstate b{display:block;margin-bottom:8px;color:var(--ink)}
 /* ===== Footer: το κλασικό ζεστό κρεμ-ροζ, χρυσές λεπτομέρειες, σιλουέτα του Φαρμακά με τα έλατα ===== */
@@ -1051,7 +1052,8 @@ var grid=document.querySelector('#v-nea .artgrid'),post=document.querySelector('
 var CAL=(grid.querySelector('.artdate svg')||{}).outerHTML||'',PIC=(grid.querySelector('.artimg svg')||{}).outerHTML||'',DL=(document.querySelector('.docbtn svg')||{}).outerHTML||'';
 /* Βίντεο YouTube: κρατάμε μόνο σωστούς κωδικούς βίντεο (11 χαρακτήρες) */
 var PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>';
-function vids(a){return (a.videos||[]).filter(function(v){return typeof v==='string'&&/^[A-Za-z0-9_-]{11}$/.test(v)})}
+function vids(a){return (a.videos||[]).map(function(v){if(typeof v==='string')return /^[A-Za-z0-9_-]{11}$/.test(v)?{yt:v}:null;
+ if(v&&typeof v.u==='string'&&/^https?:\/\//i.test(v.u)){try{var x=new URL(v.u);if(x.protocol==='https:'||x.protocol==='http:')return {u:x.href,s:x.hostname.replace(/^www\./,'')}}catch(e){}}return null}).filter(Boolean)}
 var PAGE=9,shown=PAGE,filt='Όλα',T0=document.title,bar=null,more=null;
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function ph(p,t){return 'photos/'+encodeURIComponent(p.f)+(t?'_t':'')+'.'+(p.x||'webp')}
@@ -1111,7 +1113,9 @@ function article(id){
  if(cover)h+='<div class="album pone" hidden>'+[cover].concat(gal).map(th).join('')+'</div><img class="pcover" src="'+ph(cover)+'" alt="'+esc(cover.alt||'')+'">';
  h+='<div class="pbody">'+(a.html!=null?sanitize(a.html):md(a.text))+'</div>';
  var V=vids(a);
- if(V.length)h+='<div class="pvideos">'+V.map(function(v,i){return '<div class="pvideo" data-yt="'+v+'"><button type="button" class="vgate" aria-label="Αναπαραγωγή βίντεο'+(V.length>1?' '+(i+1):'')+'">'+(cover?'<img src="'+ph(cover)+'" alt="">':'')+'<span class="vp">'+PLAY+'</span><b>Αναπαραγωγή βίντεο</b><small>Το βίντεο φορτώνει από το YouTube μόλις το πατήσετε.</small></button></div>'}).join('')+'</div>';
+ var POS=cover?'<img src="'+ph(cover)+'" alt="">':'';
+ if(V.length)h+='<div class="pvideos">'+V.map(function(v,i){return v.yt?'<div class="pvideo" data-yt="'+v.yt+'"><button type="button" class="vgate" aria-label="Αναπαραγωγή βίντεο'+(V.length>1?' '+(i+1):'')+'">'+POS+'<span class="vp">'+PLAY+'</span><b>Αναπαραγωγή βίντεο</b><small>Το βίντεο φορτώνει από το YouTube μόλις το πατήσετε.</small></button></div>'
+  :'<div class="pvideo"><a class="vgate vext" href="'+esc(v.u)+'" target="_blank" rel="noopener">'+POS+'<span class="vp">'+PLAY+'</span><b>Δείτε το βίντεο ↗</b><small>Ανοίγει σε νέα καρτέλα, στη σελίδα '+esc(v.s)+'</small></a></div>'}).join('')+'</div>';
  if(gal.length)h+='<h3 class="pgal-h">Φωτογραφίες</h3><div class="album">'+gal.map(th).join('')+'</div>';
  if((a.files||[]).length)h+='<div class="pfiles">'+a.files.map(function(f){return '<a class="docbtn" href="files/'+encodeURIComponent(f.f)+'" target="_blank" rel="noopener" download="'+esc(f.n)+'.pdf">'+DL+esc(f.n)+' (PDF)</a>'}).join('')+'</div>';
  post.innerHTML=h;window.scrollTo(0,0);
