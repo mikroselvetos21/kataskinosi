@@ -53,7 +53,7 @@ p{margin:0 0 12px}.hint{color:var(--muted);font-size:.9rem}.err{color:var(--red)
 .empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed #c9d9dc;border-radius:16px;background:var(--surface)}
 form .f{display:grid;gap:6px;margin:0 0 18px}
 form .l{font-weight:700}
-input[type=text],input[type=date],select,textarea{width:100%;padding:11px 13px;border:1px solid #c9d9dc;border-radius:12px;background:#fff}
+input[type=text],input[type=url],input[type=date],select,textarea{width:100%;padding:11px 13px;border:1px solid #c9d9dc;border-radius:12px;background:#fff}
 textarea{min-height:240px;resize:vertical;line-height:1.6}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
@@ -75,6 +75,10 @@ textarea{min-height:240px;resize:vertical;line-height:1.6}
 .ph .pa button{width:30px;height:30px;border:0;border-radius:50%;background:rgba(255,255,255,.95);cursor:pointer;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .ph.busy{display:grid;place-items:center;color:var(--muted);font-size:.85rem}
 .files{display:grid;gap:8px;margin-top:10px}
+.vin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.vrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px}
+.vrow img{width:96px;height:54px;object-fit:cover;border-radius:8px;background:var(--line);display:block}
+.vrow a{color:var(--sea);font-weight:600;word-break:break-all}
 .fi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .formacts{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:8px;padding-top:18px;border-top:1px solid var(--line)}
 .alb{margin:0 0 18px}
@@ -87,7 +91,7 @@ textarea{min-height:240px;resize:vertical;line-height:1.6}
 .conn{display:grid;gap:14px;margin-top:18px}
 .conn .f{display:grid;gap:6px}
 .conn label.l{font-weight:700}
-.conn input[type=text],.conn input[type=password]{width:100%;padding:11px 13px;border:1px solid #c9d9dc;border-radius:12px;background:#fff}
+.conn input[type=text],input[type=url],.conn input[type=password]{width:100%;padding:11px 13px;border:1px solid #c9d9dc;border-radius:12px;background:#fff}
 .chk{display:flex;align-items:center;gap:8px;font-size:.92rem}
 details.how{margin-top:6px;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:#fbfdfd}
 details.how summary{cursor:pointer;font-weight:700;color:var(--sea)}
@@ -184,6 +188,11 @@ details.how ol{margin:10px 0 0;padding-left:1.3em}details.how li{margin:0 0 6px}
   <div class="f"><span class="l">Συνημμένα PDF (π.χ. αιτήσεις, έντυπα)</span>
    <div><label class="btn sm">+ Προσθήκη PDF<input type="file" id="fF" accept="application/pdf,.pdf" multiple hidden></label></div>
    <div class="files" id="flist"></div></div>
+  <div class="f"><label class="l" for="fV">Βίντεο YouTube</label>
+   <div class="vin"><input type="url" id="fV" inputmode="url" autocomplete="off" placeholder="Επικολλήστε εδώ τον σύνδεσμο του βίντεο"><button type="button" class="btn sm" id="fVadd">Προσθήκη</button></div>
+   <p class="help">Στο YouTube πατήστε «Κοινοποίηση» → «Αντιγραφή συνδέσμου». Το βίντεο πρέπει να είναι «Δημόσιο» ή «Μη καταχωρισμένο». Στο site εμφανίζεται κάτω από το κείμενο και παίζει όταν το πατήσει ο επισκέπτης.</p>
+   <p id="verr" class="err" role="alert"></p>
+   <div class="files" id="vlist"></div></div>
   <p id="ederr" class="err" role="alert"></p>
   <div class="formacts"><div><button type="submit" class="btn primary">Αποθήκευση ανάρτησης</button> <button type="button" class="btn" data-cancel>Ακύρωση</button></div><button type="button" class="btn danger" id="del" hidden>Διαγραφή ανάρτησης</button></div>
  </form>
@@ -272,7 +281,7 @@ function stats(){var n=C.articles.length,ph=0;C.articles.forEach(function(a){ph+
 function renderArts(){
  var L=sorted(),box=$('#artList');
  if(!L.length){box.innerHTML='<div class="empty">Δεν υπάρχουν ακόμη αναρτήσεις. Πατήστε «+ Νέα ανάρτηση» για την πρώτη.<br><small>Μέχρι τότε, το site δείχνει τις ενδεικτικές κάρτες.</small></div>';return}
- box.innerHTML=L.map(function(a){var p=(a.photos||[])[0],s=p&&src(p,1);return '<div class="item"><div class="im">'+(s?'<img src="'+s+'" alt="">':'')+'</div><div><b>'+esc(a.title)+'</b><small><span class="tag '+esc(a.type)+'">'+esc(a.type)+'</span>'+esc(fmt(a.date))+' · '+(a.photos||[]).length+' φωτ.'+((a.files||[]).length?' · '+a.files.length+' PDF':'')+(a.album?' · άλμπουμ: '+esc(ALB[a.album]):'')+'</small></div><div class="acts"><button type="button" class="btn sm" data-ed="'+a.id+'">Επεξεργασία</button></div></div>'}).join('');
+ box.innerHTML=L.map(function(a){var p=(a.photos||[])[0],s=p&&src(p,1);return '<div class="item"><div class="im">'+(s?'<img src="'+s+'" alt="">':'')+'</div><div><b>'+esc(a.title)+'</b><small><span class="tag '+esc(a.type)+'">'+esc(a.type)+'</span>'+esc(fmt(a.date))+' · '+(a.photos||[]).length+' φωτ.'+((a.files||[]).length?' · '+a.files.length+' PDF':'')+((a.videos||[]).length?' · '+a.videos.length+' βίντεο':'')+(a.album?' · άλμπουμ: '+esc(ALB[a.album]):'')+'</small></div><div class="acts"><button type="button" class="btn sm" data-ed="'+a.id+'">Επεξεργασία</button></div></div>'}).join('');
 }
 function renderAlbs(){
  $('#albList').innerHTML=Object.keys(ALB).map(function(k){
@@ -291,7 +300,7 @@ document.addEventListener('click',function(e){
  if(e.target.closest('[data-cancel]')){if(leaveOk())closeEd();return}
 });
 $('#newArt').addEventListener('click',function(){if(leaveOk())openEd(null)});
-['#fT','#fD','#fA'].forEach(function(s){$(s).addEventListener('input',function(){dDirty=true})});document.querySelectorAll('input[name=ty]').forEach(function(r){r.addEventListener('change',function(){dDirty=true})});
+['#fT','#fD','#fA','#fV'].forEach(function(s){$(s).addEventListener('input',function(){dDirty=true})});document.querySelectorAll('input[name=ty]').forEach(function(r){r.addEventListener('change',function(){dDirty=true})});
 $('#fT').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ED.focus()}});
 /* Ενημέρωση σχεδίου: νέο index.html, με τις τρέχουσες αναρτήσεις */
 $('#tpl').addEventListener('change',function(){var f=this.files&&this.files[0];this.value='';if(!f)return;f.text().then(function(t){
@@ -300,12 +309,12 @@ $('#tpl').addEventListener('change',function(){var f=this.files&&this.files[0];t
 
 /* ---------- Φόρμα ανάρτησης ---------- */
 function openEd(a){
- editing=a;draft=a?JSON.parse(JSON.stringify(a)):{id:0,date:today(),type:'Νέα',title:'',text:'',photos:[],files:[],album:''};
+ editing=a;draft=a?JSON.parse(JSON.stringify(a)):{id:0,date:today(),type:'Νέα',title:'',text:'',photos:[],files:[],album:''};draft.videos=(draft.videos||[]).slice();$('#fV').value='';$('#verr').textContent='';
  $('#edTitle').textContent=a?'Επεξεργασία ανάρτησης':'Νέα ανάρτηση';$('#fT').value=draft.title;$('#fD').value=draft.date;ED.innerHTML=(draft.html!=null?sanitize(draft.html):md(draft.text))||'<p><br></p>';edEmpty();saved=null;
  document.querySelectorAll('input[name=ty]').forEach(function(r){r.checked=r.value===draft.type});
  $('#fA').innerHTML='<option value="">— Όχι, μόνο στην ανάρτηση —</option>'+Object.keys(ALB).map(function(k){return '<option value="'+k+'"'+(draft.album===k?' selected':'')+'>'+esc(ALB[k])+'</option>'}).join('');
  $('#del').hidden=!a;$('#ederr').textContent='';$('#tab-arts').hidden=true;$('#tab-albs').hidden=true;$('#donebox').hidden=true;$('#edit').hidden=false;
- dDirty=false;drawPhotos();drawFiles();stats();window.scrollTo(0,0);$('#fT').focus();pushEd();
+ dDirty=false;drawPhotos();drawFiles();drawVideos();stats();window.scrollTo(0,0);$('#fT').focus();pushEd();
 }
 /* Το «πίσω» του κινητού (ή του browser) κλείνει την ανάρτηση και γυρίζει στη λίστα, αντί να βγαίνει από την εφαρμογή */
 var edHist=false,backing=false,wantPush=false;
@@ -370,13 +379,27 @@ $('#pgrid').addEventListener('click',function(e){var m=e.target.closest('[data-m
 function many(fs,alt,add){var bad=0;busy++;stats();return fs.reduce(function(pr,f){return pr.then(function(){if(!/^image\//.test(f.type)&&!/\.(jpe?g|png|webp|gif|heic|heif|bmp)$/i.test(f.name)){bad++;return}return proc(f,alt).then(add,function(){bad++})})},Promise.resolve()).then(function(){busy--;stats();if(bad)alert(bad+(bad===1?' αρχείο δεν ήταν φωτογραφία που μπορεί να ανοίξει και παραλείφθηκε.':' αρχεία δεν ήταν φωτογραφίες που μπορούν να ανοίξουν και παραλείφθηκαν.')+' Δοκιμάστε JPG ή PNG.')})}
 $('#fP').addEventListener('change',function(){var fs=[].slice.call(this.files||[]);this.value='';if(!fs.length||!draft)return;var d=draft;dDirty=true;drawPhotos(true);
  many(fs,'',function(p){d.photos.push(p);if(draft===d)drawPhotos(true)}).then(function(){if(draft===d)drawPhotos()})});
+/* Βίντεο YouTube: κρατάμε μόνο τον κωδικό του βίντεο (11 χαρακτήρες) */
+function ytId(u){u=String(u||'').trim();if(/^[A-Za-z0-9_-]{11}$/.test(u))return u;
+ var m=u.match(/^(?:https?:\/\/)?(?:www\.|m\.|music\.)?(youtube\.com|youtube-nocookie\.com|youtu\.be)\/([^#]*)$/i),x;if(!m)return '';var r=m[2];
+ if(/youtu\.be/i.test(m[1]))return (x=r.match(/^([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/))?x[1]:'';
+ if(x=r.match(/^watch\?(?:[^#]*&)?v=([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/))return x[1];
+ if(x=r.match(/^(?:embed|shorts|live|v)\/([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/))return x[1];
+ return ''}
+function drawVideos(){$('#vlist').innerHTML=(draft.videos||[]).map(function(v,i){return '<div class="vrow"><img src="https://i.ytimg.com/vi/'+v+'/mqdefault.jpg" alt="" onerror="this.style.visibility=\'hidden\'"><a href="https://youtu.be/'+v+'" target="_blank" rel="noopener">youtu.be/'+v+' ↗</a><button type="button" class="btn sm danger" data-vrm="'+i+'">Αφαίρεση</button></div>'}).join('')}
+function addVideo(){var u=$('#fV').value.trim();$('#verr').textContent='';if(!u)return true;var id=ytId(u);
+ if(!id){$('#verr').textContent='Αυτός ο σύνδεσμος δεν είναι βίντεο του YouTube. Αντιγράψτε τον από το κουμπί «Κοινοποίηση» του βίντεο.';$('#fV').focus();return false}
+ if(draft.videos.indexOf(id)<0)draft.videos.push(id);$('#fV').value='';dDirty=true;drawVideos();return true}
+$('#fVadd').addEventListener('click',addVideo);
+$('#fV').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addVideo()}});
+$('#vlist').addEventListener('click',function(e){var b=e.target.closest('[data-vrm]');if(b){draft.videos.splice(+b.dataset.vrm,1);dDirty=true;drawVideos()}});
 function drawFiles(){$('#flist').innerHTML=draft.files.map(function(f,i){return '<div class="fi"><input type="text" value="'+esc(f.n)+'" data-fn="'+i+'" aria-label="Όνομα αρχείου όπως θα φαίνεται στο κουμπί"><button type="button" class="btn sm danger" data-frm="'+i+'">Αφαίρεση</button></div>'}).join('')}
 $('#flist').addEventListener('input',function(e){var i=e.target.getAttribute('data-fn');if(i!=null){draft.files[+i].n=e.target.value;dDirty=true}});
 $('#flist').addEventListener('click',function(e){var b=e.target.closest('[data-frm]');if(b){draft.files.splice(+b.dataset.frm,1);dDirty=true;drawFiles()}});
 $('#fF').addEventListener('change',function(){var bad=[];[].slice.call(this.files||[]).forEach(function(f){if(f.type!=='application/pdf'&&!/\.pdf$/i.test(f.name)){bad.push(f.name);return}if(f.size>20*1048576&&!confirm('Το «'+f.name+'» είναι πολύ μεγάλο ('+kb(f.size)+') και θα αργεί να κατέβει από το κινητό. Να προστεθεί;'))return;var id=rid()+'.pdf';newPdf[id]=f;draft.files.push({f:id,n:f.name.replace(/\.pdf$/i,'').replace(/[_]+/g,' ')});dDirty=true});this.value='';drawFiles();if(bad.length)alert('Μόνο αρχεία PDF μπορούν να επισυναφθούν. Παραλείφθηκαν: '+bad.join(', '))});
-$('#edit').addEventListener('submit',function(e){e.preventDefault();if(busy)return;
+$('#edit').addEventListener('submit',function(e){e.preventDefault();if(busy)return;if(!addVideo()){$('#ederr').textContent='Διορθώστε τον σύνδεσμο του βίντεο ή σβήστε τον.';return}
  var t=$('#fT').value.trim(),d=$('#fD').value;if(!t){$('#ederr').textContent='Συμπληρώστε τίτλο.';$('#fT').focus();return}if(!d){$('#ederr').textContent='Συμπληρώστε ημερομηνία.';return}
- draft.title=t;draft.date=d;draft.html=sanitize(ED.innerHTML);delete draft.text;draft.type=($('input[name=ty]:checked')||{}).value||'Νέα';draft.album=$('#fA').value;
+ draft.title=t;draft.date=d;draft.html=sanitize(ED.innerHTML);delete draft.text;draft.type=($('input[name=ty]:checked')||{}).value||'Νέα';draft.album=$('#fA').value;if(!(draft.videos||[]).length)delete draft.videos;
  draft.files=draft.files.filter(function(f){f.n=(f.n||'').trim()||'Αρχείο';return true});
  draft.photos.forEach(function(p,i){p.alt=t+(draft.photos.length>1?' – φωτογραφία '+(i+1):'')});
  if(editing){var i=C.articles.indexOf(editing);C.articles[i]=draft}else{var id=Math.floor(Date.now()/1000);while(C.articles.some(function(a){return a.id===id}))id++;draft.id=id;C.articles.push(draft)}
