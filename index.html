@@ -718,6 +718,20 @@ html.mopen{overflow:hidden}html.mopen .top{z-index:1000}
 @media (max-width:560px){.album,.post .album{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}
 .pfiles{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 0}
 .pfiles .docbtn{text-decoration:none}
+.pvideos{display:grid;gap:18px;margin:30px 0 0}
+.pvideo{position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:#0d2a33}
+.pvideo iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vgate{position:absolute;inset:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;border:0;margin:0;cursor:pointer;color:#fff;font:inherit;text-align:center;background:linear-gradient(160deg,var(--sea-d),#0d2a33)}
+.vgate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45}
+.vgate .vp{position:relative;display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.96);color:var(--sea-d);box-shadow:0 10px 28px rgba(0,0,0,.32);transition:transform .2s ease}
+.vgate:hover .vp,.vgate:focus-visible .vp{transform:scale(1.08)}
+.vgate:focus-visible{outline:3px solid #fff;outline-offset:-6px}
+.vgate .vp svg{width:30px;height:30px;margin-left:4px}
+.vgate b{position:relative;font-size:1.05rem;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.vgate small{position:relative;max-width:34ch;font-size:.8rem;line-height:1.4;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.55)}
+.artimg .vbadge{position:absolute;right:12px;bottom:12px;z-index:1;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.94);color:var(--sea-d);box-shadow:0 4px 14px rgba(22,50,58,.2)}
+.artimg .vbadge svg{width:16px;height:16px;margin-left:2px;opacity:1;transform:none}
+@media (max-width:600px){.vgate .vp{width:60px;height:60px}.vgate .vp svg{width:26px;height:26px}.vgate small{display:none}}
 .view .nstate{max-width:560px;margin:8px auto 0;padding:40px 26px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed #c9d9dc;border-radius:22px}
 .view .nstate b{display:block;margin-bottom:8px;color:var(--ink)}
 /* ===== Footer: το κλασικό ζεστό κρεμ-ροζ, χρυσές λεπτομέρειες, σιλουέτα του Φαρμακά με τα έλατα ===== */
@@ -1035,6 +1049,9 @@ var C={};try{C=JSON.parse(document.getElementById('site-content').textContent||'
 var A=(C.articles||[]).slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(b.id-a.id)}),AL=C.albums||{};
 var grid=document.querySelector('#v-nea .artgrid'),post=document.querySelector('#v-arthro .post');if(!grid||!post)return;
 var CAL=(grid.querySelector('.artdate svg')||{}).outerHTML||'',PIC=(grid.querySelector('.artimg svg')||{}).outerHTML||'',DL=(document.querySelector('.docbtn svg')||{}).outerHTML||'';
+/* Βίντεο YouTube: κρατάμε μόνο σωστούς κωδικούς βίντεο (11 χαρακτήρες) */
+var PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>';
+function vids(a){return (a.videos||[]).filter(function(v){return typeof v==='string'&&/^[A-Za-z0-9_-]{11}$/.test(v)})}
 var PAGE=9,shown=PAGE,filt='Όλα',T0=document.title,bar=null,more=null;
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function ph(p,t){return 'photos/'+encodeURIComponent(p.f)+(t?'_t':'')+'.'+(p.x||'webp')}
@@ -1074,7 +1091,7 @@ function exh(h){var d=new DOMParser().parseFromString(h||'','text/html'),P=[].sl
 function ex(t){var bl=String(t||'').replace(/\r/g,'').split(/\n\s*\n/),pp=bl.filter(function(b){b=b.trim();return b&&!/^##\s/.test(b)&&!b.split('\n').every(function(l){return /^\s*[-•]\s+/.test(l)})});var x=(pp.length?pp:bl).join(' ').replace(/\*\*/g,'').replace(/^##\s+/gm,'').replace(/^\s*[-•]\s+/gm,'').replace(/\s+/g,' ').trim();if(x.length>170){x=x.slice(0,170);x=x.slice(0,x.lastIndexOf(' ')>100?x.lastIndexOf(' '):170).replace(/[,.;:·\s]+$/,'')+'…'}return x}
 function tcls(t){return t==='Ανακοίνωση'?' t-an':t==='Άρθρο'?' t-ar':''}
 function th(p){return '<button type="button" class="th"><img src="'+ph(p,1)+'" data-full="'+ph(p)+'" alt="'+esc(p.alt||'')+'" loading="lazy" decoding="async"></button>'}
-function card(a){var p=(a.photos||[])[0],X=a.html!=null?exh(a.html):a.text;return '<article class="artcard live" data-type="'+esc(a.type)+'"><div class="artimg">'+(p?'<img src="'+ph(p,1)+'" alt="" loading="lazy" decoding="async">':PIC)+'<span class="arttag">'+esc(a.type)+'</span></div><div class="artbody"><p class="artdate">'+CAL+esc(fmt(a.date))+'</p><h3><a class="artlnk" href="#arthro-'+a.id+'" data-go>'+esc(a.title)+'</a></h3><p class="arttext">'+esc(ex(X))+'</p></div></article>'}
+function card(a){var p=(a.photos||[])[0],X=a.html!=null?exh(a.html):a.text;return '<article class="artcard live" data-type="'+esc(a.type)+'"><div class="artimg">'+(p?'<img src="'+ph(p,1)+'" alt="" loading="lazy" decoding="async">':PIC)+'<span class="arttag">'+esc(a.type)+'</span>'+(vids(a).length?'<span class="vbadge" role="img" aria-label="Με βίντεο" title="Με βίντεο">'+PLAY+'</span>':'')+'</div><div class="artbody"><p class="artdate">'+CAL+esc(fmt(a.date))+'</p><h3><a class="artlnk" href="#arthro-'+a.id+'" data-go>'+esc(a.title)+'</a></h3><p class="arttext">'+esc(ex(X))+'</p></div></article>'}
 function news(){
  if(!A.length)return; /* χωρίς άρθρα μένουν οι ενδεικτικές κάρτες */
  var list=A.filter(function(a){return filt==='Όλα'||a.type===filt});
@@ -1093,12 +1110,17 @@ function article(id){
  var h='<p class="pmeta"><span class="arttag'+tcls(a.type)+'">'+esc(a.type)+'</span><time datetime="'+esc(a.date)+'">'+esc(fmt(a.date))+'</time></p><h1 class="ptitle">'+esc(a.title)+'</h1>';
  if(cover)h+='<div class="album pone" hidden>'+[cover].concat(gal).map(th).join('')+'</div><img class="pcover" src="'+ph(cover)+'" alt="'+esc(cover.alt||'')+'">';
  h+='<div class="pbody">'+(a.html!=null?sanitize(a.html):md(a.text))+'</div>';
+ var V=vids(a);
+ if(V.length)h+='<div class="pvideos">'+V.map(function(v,i){return '<div class="pvideo" data-yt="'+v+'"><button type="button" class="vgate" aria-label="Αναπαραγωγή βίντεο'+(V.length>1?' '+(i+1):'')+'">'+(cover?'<img src="'+ph(cover)+'" alt="">':'')+'<span class="vp">'+PLAY+'</span><b>Αναπαραγωγή βίντεο</b><small>Το βίντεο φορτώνει από το YouTube μόλις το πατήσετε.</small></button></div>'}).join('')+'</div>';
  if(gal.length)h+='<h3 class="pgal-h">Φωτογραφίες</h3><div class="album">'+gal.map(th).join('')+'</div>';
  if((a.files||[]).length)h+='<div class="pfiles">'+a.files.map(function(f){return '<a class="docbtn" href="files/'+encodeURIComponent(f.f)+'" target="_blank" rel="noopener" download="'+esc(f.n)+'.pdf">'+DL+esc(f.n)+' (PDF)</a>'}).join('')+'</div>';
  post.innerHTML=h;window.scrollTo(0,0);
 }
 /* Η κύρια φωτογραφία ανοίγει κι αυτή σε μεγέθυνση */
 post.addEventListener('click',function(e){if(!e.target.classList.contains('pcover'))return;var g=post.querySelector('.album.pone .th');if(g)g.click()});
+post.addEventListener('click',function(e){var g=e.target.closest('.vgate');if(!g)return;var box=g.parentNode,id=box.getAttribute('data-yt');if(!/^[A-Za-z0-9_-]{11}$/.test(id||''))return;
+ box._gate=box.innerHTML;var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0&playsinline=1';f.title='Βίντεο YouTube';f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';box.innerHTML='';box.appendChild(f);f.focus()});
+document.addEventListener('viewshow',function(e){if(e.detail&&e.detail.id==='v-arthro')return;post.querySelectorAll('.pvideo').forEach(function(b){if(b._gate!=null&&b.querySelector('iframe')){b.innerHTML=b._gate;b._gate=null}})});
 function albums(){
  Object.keys({'pm-1':1,'pm-2':1,'pm-3':1,'pm-4':1,'pm-5':1,'pm-6':1}).forEach(function(k){
   var list=(AL[k]||[]).slice(),seen={};A.forEach(function(a){if(a.album===k)(a.photos||[]).forEach(function(p){list.push(p)})});
