@@ -189,9 +189,9 @@ details.how ol{margin:10px 0 0;padding-left:1.3em}details.how li{margin:0 0 6px}
   <div class="f"><span class="l">Συνημμένα PDF (π.χ. αιτήσεις, έντυπα)</span>
    <div><label class="btn sm">+ Προσθήκη PDF<input type="file" id="fF" accept="application/pdf,.pdf" multiple hidden></label></div>
    <div class="files" id="flist"></div></div>
-  <div class="f"><label class="l" for="fV">Βίντεο (YouTube ή σύνδεσμος από άλλο site)</label>
+  <div class="f"><label class="l" for="fV">Βίντεο (YouTube, δικό σας mp4 ή σύνδεσμος από άλλο site)</label>
    <div class="vin"><input type="url" id="fV" inputmode="url" autocomplete="off" placeholder="Επικολλήστε εδώ τον σύνδεσμο του βίντεο"><button type="button" class="btn sm" id="fVadd">Προσθήκη</button></div>
-   <p class="help"><b>YouTube:</b> «Κοινοποίηση» → «Αντιγραφή συνδέσμου». Το βίντεο παίζει μέσα στη σελίδα· πρέπει να είναι «Δημόσιο» ή «Μη καταχωρισμένο». <b>Άλλο site</b> (π.χ. PemptousiaTV): αντιγράψτε τη διεύθυνση της σελίδας του βίντεο· στο άρθρο θα εμφανίζεται κουμπί που την ανοίγει σε νέα καρτέλα.</p>
+   <p class="help"><b>YouTube:</b> «Κοινοποίηση» → «Αντιγραφή συνδέσμου». Το βίντεο παίζει μέσα στη σελίδα· πρέπει να είναι «Δημόσιο» ή «Μη καταχωρισμένο». <b>Δικό σας βίντεο</b> ανεβασμένο στο WordPress της Μητρόπολης: επικολλήστε τη «Διεύθυνση URL αρχείου» (τελειώνει σε .mp4)· παίζει μέσα στη σελίδα. <b>Άλλο site</b> (π.χ. PemptousiaTV): αντιγράψτε τη διεύθυνση της σελίδας του βίντεο· στο άρθρο θα εμφανίζεται κουμπί που την ανοίγει σε νέα καρτέλα.</p>
    <p id="verr" class="err" role="alert"></p>
    <div class="files" id="vlist"></div></div>
   <p id="ederr" class="err" role="alert"></p>
@@ -322,7 +322,7 @@ function openEd(a){
  document.querySelectorAll('input[name=ty]').forEach(function(r){r.checked=r.value===draft.type});
  $('#fA').innerHTML='<option value="">— Όχι, μόνο στην ανάρτηση —</option>'+Object.keys(ALB).map(function(k){return '<option value="'+k+'"'+(draft.album===k?' selected':'')+'>'+esc(ALB[k])+'</option>'}).join('');
  $('#del').hidden=!a;$('#ederr').textContent='';$('#tab-arts').hidden=true;$('#tab-albs').hidden=true;$('#donebox').hidden=true;$('#edit').hidden=false;
- dDirty=false;drawPhotos();drawFiles();drawVideos();stats();window.scrollTo(0,0);$('#fT').focus();pushEd();
+ dDirty=false;drawPhotos();drawFiles();drawVideos();checkVideos();stats();window.scrollTo(0,0);$('#fT').focus();pushEd();
 }
 /* Το «πίσω» του κινητού (ή του browser) κλείνει την ανάρτηση και γυρίζει στη λίστα, αντί να βγαίνει από την εφαρμογή */
 var edHist=false,backing=false,wantPush=false;
@@ -397,16 +397,26 @@ function ytId(u){u=String(u||'').trim();if(/^[A-Za-z0-9_-]{11}$/.test(u))return 
 /* Σύνδεσμος από άλλο site: δεν παίζει μέσα στη σελίδα, ανοίγει τη σελίδα του βίντεο */
 function extLink(u){u=String(u||'').trim();if(!/^https?:\/\/[^\s]+$/i.test(u))return null;try{var x=new URL(u);if(!/\./.test(x.hostname)||isYT(x.hostname))return null;return {u:x.href,s:x.hostname.replace(/^www\./,'')}}catch(e){return null}}
 function isYT(h){return /(^|\.)(youtube\.com|youtube-nocookie\.com|youtu\.be)$/i.test(h)}
-function vidParse(u){var id=ytId(u);if(id)return id;return extLink(u)||''}
+/* Αρχείο βίντεο σε άλλον server (π.χ. στο WordPress της Μητρόπολης): παίζει μέσα στη σελίδα */
+function vidFile(u){u=String(u||'').trim();if(!/^https?:\/\/[^\s]+$/i.test(u))return null;try{var x=new URL(u);if(/\./.test(x.hostname)&&/\.(mp4|m4v|webm)$/i.test(x.pathname))return {m:x.href}}catch(e){}return null}
+function vidParse(u){var id=ytId(u);if(id)return id;return vidFile(u)||extLink(u)||''}
 function drawVideos(){$('#vlist').innerHTML=(draft.videos||[]).map(function(v,i){var rm='<button type="button" class="btn sm danger" data-vrm="'+i+'">Αφαίρεση</button>';
  if(typeof v==='string')return '<div class="vrow"><img src="https://i.ytimg.com/vi/'+v+'/mqdefault.jpg" alt="" onerror="this.style.visibility=\'hidden\'"><div><a href="https://youtu.be/'+v+'" target="_blank" rel="noopener">youtu.be/'+v+' ↗</a><small class="hint" style="display:block">YouTube · παίζει μέσα στη σελίδα</small></div>'+rm+'</div>';
+ if(v.m){var nm=decodeURIComponent(v.m.split('?')[0].split('/').pop());return '<div class="vrow" data-vchk="'+i+'"><span class="vext" aria-hidden="true">🎬</span><div><a href="'+esc(v.m)+'" target="_blank" rel="noopener">'+esc(nm)+' ↗</a><small class="hint vinfo" style="display:block">Αρχείο βίντεο · παίζει μέσα στη σελίδα · έλεγχος…</small></div>'+rm+'</div>'}
  return '<div class="vrow"><span class="vext" aria-hidden="true">🔗</span><div><a href="'+esc(v.u)+'" target="_blank" rel="noopener">'+esc(v.s)+' ↗</a><small class="hint" style="display:block">Άλλο site · στο άρθρο θα ανοίγει τη σελίδα του βίντεο σε νέα καρτέλα</small></div>'+rm+'</div>'}).join('')}
+function checkVideos(){[].forEach.call(document.querySelectorAll('#vlist [data-vchk]'),function(row){var v=draft.videos[+row.dataset.vchk];if(!v||!v.m)return;var out=row.querySelector('.vinfo'),el=document.createElement('video'),done=false;el.preload='metadata';el.muted=true;
+ function fin(t,bad){if(done)return;done=true;out.textContent=t;if(bad)out.style.color='#b42318';el.removeAttribute('src');try{el.load()}catch(e){}}
+ el.addEventListener('loadedmetadata',function(){var d=Math.round(el.duration||0),dur=d?Math.floor(d/60)+':'+('0'+d%60).slice(-2):'';
+  if(!el.videoWidth)fin('Ο browser σας ανοίγει το αρχείο αλλά όχι την εικόνα του. Μάλλον είναι σε μορφή HEVC (iPhone) και δεν θα παίζει σε όλους.',true);
+  else fin('Αρχείο βίντεο · παίζει μέσα στη σελίδα · '+(dur?dur+' · ':'')+el.videoWidth+'×'+el.videoHeight)});
+ el.addEventListener('error',function(){fin('Δεν μπόρεσα να ανοίξω το βίντεο. Ελέγξτε ότι αντιγράψατε ολόκληρη τη «Διεύθυνση URL αρχείου», ή μήπως είναι σε μορφή HEVC (iPhone) που δεν παίζει παντού.',true)});
+ setTimeout(function(){fin('Δεν ήταν δυνατός ο έλεγχος τώρα (αργή σύνδεση;). Ελέγξτε το βίντεο στο site μετά τη δημοσίευση.',false)},20000);el.src=v.m})}
 function addVideo(){var u=$('#fV').value.trim();$('#verr').textContent='';if(!u)return true;var v=vidParse(u);
  if(!v){var yt=false;try{yt=isYT(new URL(u).hostname)}catch(e){}$('#verr').textContent=yt?'Αυτός ο σύνδεσμος του YouTube δεν δείχνει σε ένα συγκεκριμένο βίντεο (μάλλον είναι κανάλι ή λίστα). Ανοίξτε το βίντεο και πατήστε «Κοινοποίηση» → «Αντιγραφή συνδέσμου».':'Αυτό δεν είναι σωστός σύνδεσμος. Αντιγράψτε ολόκληρη τη διεύθυνση (ξεκινά με https://) από τη σελίδα του βίντεο.';$('#fV').focus();return false}
- var k=JSON.stringify(v);if(!draft.videos.some(function(x){return JSON.stringify(x)===k}))draft.videos.push(v);$('#fV').value='';dDirty=true;drawVideos();return true}
+ var k=JSON.stringify(v);if(!draft.videos.some(function(x){return JSON.stringify(x)===k}))draft.videos.push(v);$('#fV').value='';dDirty=true;drawVideos();checkVideos();return true}
 $('#fVadd').addEventListener('click',addVideo);
 $('#fV').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addVideo()}});
-$('#vlist').addEventListener('click',function(e){var b=e.target.closest('[data-vrm]');if(b){draft.videos.splice(+b.dataset.vrm,1);dDirty=true;drawVideos()}});
+$('#vlist').addEventListener('click',function(e){var b=e.target.closest('[data-vrm]');if(b){draft.videos.splice(+b.dataset.vrm,1);dDirty=true;drawVideos();checkVideos()}});
 function drawFiles(){$('#flist').innerHTML=draft.files.map(function(f,i){return '<div class="fi"><input type="text" value="'+esc(f.n)+'" data-fn="'+i+'" aria-label="Όνομα αρχείου όπως θα φαίνεται στο κουμπί"><button type="button" class="btn sm danger" data-frm="'+i+'">Αφαίρεση</button></div>'}).join('')}
 $('#flist').addEventListener('input',function(e){var i=e.target.getAttribute('data-fn');if(i!=null){draft.files[+i].n=e.target.value;dDirty=true}});
 $('#flist').addEventListener('click',function(e){var b=e.target.closest('[data-frm]');if(b){draft.files.splice(+b.dataset.frm,1);dDirty=true;drawFiles()}});
