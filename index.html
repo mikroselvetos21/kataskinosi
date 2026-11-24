@@ -725,7 +725,9 @@ html.mopen{overflow:hidden}html.mopen .top{z-index:1000}
 .pshare .rbtn svg{width:19px;height:19px;flex:none}
 .pshare-m{color:var(--muted);font-size:.92rem}
 .pvideo{position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:#0d2a33}
-.pvideo iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.pvideo iframe,.pvideo video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.pvideo[data-mp4]{max-height:80vh}
+.pvideo .verr{position:absolute;inset:0;display:grid;place-content:center;padding:24px;margin:0;color:#fff;text-align:center;line-height:1.5}.pvideo .verr a{color:#ffd45e}
 .vgate{position:absolute;inset:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;border:0;margin:0;cursor:pointer;color:#fff;font:inherit;text-align:center;background:linear-gradient(160deg,var(--sea-d),#0d2a33)}
 .vgate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45}
 .vgate .vp{position:relative;display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.96);color:var(--sea-d);box-shadow:0 10px 28px rgba(0,0,0,.32);transition:transform .2s ease}
@@ -1057,6 +1059,7 @@ var CAL=(grid.querySelector('.artdate svg')||{}).outerHTML||'',PIC=(grid.querySe
 /* Βίντεο YouTube: κρατάμε μόνο σωστούς κωδικούς βίντεο (11 χαρακτήρες) */
 var PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>';
 function vids(a){return (a.videos||[]).map(function(v){if(typeof v==='string')return /^[A-Za-z0-9_-]{11}$/.test(v)?{yt:v}:null;
+ if(v&&typeof v.m==='string'&&/^https?:\/\//i.test(v.m)){try{var y=new URL(v.m);if(/^https?:$/.test(y.protocol)&&/\.(mp4|m4v|webm)$/i.test(y.pathname))return {m:y.href}}catch(e){}}
  if(v&&typeof v.u==='string'&&/^https?:\/\//i.test(v.u)){try{var x=new URL(v.u);if(x.protocol==='https:'||x.protocol==='http:')return {u:x.href,s:x.hostname.replace(/^www\./,'')}}catch(e){}}return null}).filter(Boolean)}
 var PAGE=9,shown=PAGE,filt='Όλα',T0=document.title,bar=null,more=null;
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -1119,6 +1122,7 @@ function article(id){
  var V=vids(a);
  var POS=cover?'<img src="'+ph(cover)+'" alt="">':'';
  if(V.length)h+='<div class="pvideos">'+V.map(function(v,i){return v.yt?'<div class="pvideo" data-yt="'+v.yt+'"><button type="button" class="vgate" aria-label="Αναπαραγωγή βίντεο'+(V.length>1?' '+(i+1):'')+'">'+POS+'<span class="vp">'+PLAY+'</span><b>Αναπαραγωγή βίντεο</b><small>Το βίντεο φορτώνει από το YouTube μόλις το πατήσετε.</small></button></div>'
+  :v.m?'<div class="pvideo" data-mp4="'+esc(v.m)+'"><button type="button" class="vgate" aria-label="Αναπαραγωγή βίντεο'+(V.length>1?' '+(i+1):'')+'">'+POS+'<span class="vp">'+PLAY+'</span><b>Αναπαραγωγή βίντεο</b></button></div>'
   :'<div class="pvideo"><a class="vgate vext" href="'+esc(v.u)+'" target="_blank" rel="noopener">'+POS+'<span class="vp">'+PLAY+'</span><b>Δείτε το βίντεο ↗</b><small>Ανοίγει σε νέα καρτέλα, στη σελίδα '+esc(v.s)+'</small></a></div>'}).join('')+'</div>';
  if(gal.length)h+='<h3 class="pgal-h">Φωτογραφίες</h3><div class="album">'+gal.map(th).join('')+'</div>';
  if((a.files||[]).length)h+='<div class="pfiles">'+a.files.map(function(f){return '<a class="docbtn" href="files/'+encodeURIComponent(f.f)+'" target="_blank" rel="noopener" download="'+esc(f.n)+'.pdf">'+DL+esc(f.n)+' (PDF)</a>'}).join('')+'</div>';
@@ -1127,7 +1131,12 @@ function article(id){
 }
 /* Η κύρια φωτογραφία ανοίγει κι αυτή σε μεγέθυνση */
 post.addEventListener('click',function(e){if(!e.target.classList.contains('pcover'))return;var g=post.querySelector('.album.pone .th');if(g)g.click()});
-post.addEventListener('click',function(e){var g=e.target.closest('.vgate');if(!g)return;var box=g.parentNode,id=box.getAttribute('data-yt');if(!/^[A-Za-z0-9_-]{11}$/.test(id||''))return;
+post.addEventListener('click',function(e){var g=e.target.closest('button.vgate');if(!g)return;var box=g.parentNode,src=box.getAttribute('data-mp4');if(!src)return;
+ box._gate=box.innerHTML;var v=document.createElement('video');v.controls=true;v.playsInline=true;v.preload='auto';v.src=src;
+ v.addEventListener('loadedmetadata',function(){if(v.videoWidth&&v.videoHeight)box.style.aspectRatio=v.videoWidth+'/'+v.videoHeight});
+ v.addEventListener('error',function(){if(box._gate==null)return;box.innerHTML='<p class="verr">Το βίντεο δεν μπορεί να παίξει σε αυτή τη συσκευή. <a href="'+esc(src)+'" target="_blank" rel="noopener">Άνοιγμα του αρχείου ↗</a></p>'});
+ box.innerHTML='';box.appendChild(v);var pr=v.play();if(pr&&pr.catch)pr.catch(function(){})});
+post.addEventListener('click',function(e){var g=e.target.closest('.vgate');if(!g||!g.parentNode)return;var box=g.parentNode,id=box.getAttribute('data-yt');if(!/^[A-Za-z0-9_-]{11}$/.test(id||''))return;
  box._gate=box.innerHTML;var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0&playsinline=1';f.title='Βίντεο YouTube';f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';box.innerHTML='';box.appendChild(f);f.focus()});
 /* Κοινοποίηση: στέλνουμε τη «κάρτα» του άρθρου (nea/ID.html), που δείχνει σωστά τίτλο και φωτογραφία σε Viber, Facebook, WhatsApp */
 post.addEventListener('click',function(e){var b=e.target.closest('[data-share]');if(!b)return;var id=b.getAttribute('data-share'),a=A.find(function(x){return String(x.id)===id}),
@@ -1136,7 +1145,7 @@ post.addEventListener('click',function(e){var b=e.target.closest('[data-share]')
  if(navigator.share){navigator.share({title:a?a.title:document.title,url:url}).catch(function(){});return}
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(function(){say('Ο σύνδεσμος αντιγράφηκε. Επικολλήστε τον σε Viber, Messenger ή email.')},function(){say(url)});return}
  say(url)});
-document.addEventListener('viewshow',function(e){if(e.detail&&e.detail.id==='v-arthro')return;post.querySelectorAll('.pvideo').forEach(function(b){if(b._gate!=null&&b.querySelector('iframe')){b.innerHTML=b._gate;b._gate=null}})});
+document.addEventListener('viewshow',function(e){if(e.detail&&e.detail.id==='v-arthro')return;post.querySelectorAll('.pvideo').forEach(function(b){if(b._gate!=null&&b.querySelector('iframe,video,.verr')){var m=b.querySelector('video');if(m){try{m.pause();m.removeAttribute('src');m.load()}catch(x){}}b.innerHTML=b._gate;b._gate=null;b.style.aspectRatio=''}})});
 function albums(){
  Object.keys({'pm-1':1,'pm-2':1,'pm-3':1,'pm-4':1,'pm-5':1,'pm-6':1}).forEach(function(k){
   var list=(AL[k]||[]).slice(),seen={};A.forEach(function(a){if(a.album===k)(a.photos||[]).forEach(function(p){list.push(p)})});
