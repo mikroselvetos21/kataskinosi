@@ -247,11 +247,14 @@ function api(path,opt){opt=opt||{};var h={'Authorization':'Bearer '+GH.tok,'Acce
  return fetch('https://api.github.com/repos/'+GH.repo+(path?'/'+path:''),{method:opt.method||'GET',headers:h,body:opt.body?JSON.stringify(opt.body):undefined,cache:'no-store'}).then(function(r){
   if(r.ok)return opt.raw?r.text():r.json();var e=new Error('http '+r.status);e.status=r.status;throw e},function(){var e=new Error('net');e.status=0;throw e})}
 function ghErr(e){return e.status===401?'Το κλειδί πρόσβασης δεν είναι σωστό ή έχει λήξει. Φτιάξτε νέο κλειδί.':e.status===403||e.status===404?'Το κλειδί δεν έχει πρόσβαση σε αυτό το repository. Ελέγξτε το όνομα και ότι στο κλειδί δώσατε «Contents: Read and write».':e.status===0?'Δεν υπάρχει σύνδεση στο internet.':e.status===409||e.status===422?'Κάποιος άλλος δημοσίευσε αλλαγές στο μεταξύ.':'Κάτι πήγε στραβά (κωδικός '+e.status+'). Δοκιμάστε ξανά.'}
+function siteBase(){if(!GH)return '';if(GH.base)return GH.base;var r=GH.repo.split('/');return 'https://'+r[0].toLowerCase()+'.github.io/'+r[1]+'/'}
+function cnameBase(t){var d=String(t||'').trim().split(/\s+/)[0].replace(/^https?:\/\//i,'').replace(/\/.*$/,'');return /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(d)?'https://'+d.toLowerCase()+'/':''}
+function readBase(){var h=GH&&GH.head;if(!h)return Promise.resolve();return api('contents/CNAME?ref='+h,{raw:1}).then(function(t){GH.base=cnameBase(t)},function(){GH.base=''})}
 function ghConnect(repo,tok,rem){
  GH={repo:repo.trim().replace(/^https?:\/\/(www\.)?github\.com\//i,'').replace(/\.git$/i,'').replace(/\/+$/,''),tok:tok.trim(),branch:'main',head:''};$('#openerr').textContent='';$('#ghGo').disabled=true;$('#ghGo').textContent='Σύνδεση…';
  return api('').then(function(r){GH.branch=r.default_branch||'main';if(r.permissions&&!r.permissions.push){var e=new Error('ro');e.status=403;throw e}return api('git/ref/heads/'+GH.branch)})
  .then(function(r){GH.head=r.object.sha;return api('contents/index.html?ref='+GH.head,{raw:1})})
- .then(function(t){if(!useIndex(t))return;try{if(rem)localStorage.setItem('thavor_gh',JSON.stringify({repo:GH.repo,tok:GH.tok}));else localStorage.removeItem('thavor_gh')}catch(e){}start('gh')})
+ .then(function(t){if(!useIndex(t))return;readBase();try{if(rem)localStorage.setItem('thavor_gh',JSON.stringify({repo:GH.repo,tok:GH.tok}));else localStorage.removeItem('thavor_gh')}catch(e){}start('gh')})
  .catch(function(e){$('#openerr').textContent=ghErr(e);GH=null})
  .then(function(){$('#ghGo').disabled=false;$('#ghGo').textContent='Σύνδεση'});
 }
@@ -282,7 +285,7 @@ function stats(){var n=C.articles.length,ph=0;C.articles.forEach(function(a){ph+
 function renderArts(){
  var L=sorted(),box=$('#artList');
  if(!L.length){box.innerHTML='<div class="empty">Δεν υπάρχουν ακόμη αναρτήσεις. Πατήστε «+ Νέα ανάρτηση» για την πρώτη.<br><small>Μέχρι τότε, το site δείχνει τις ενδεικτικές κάρτες.</small></div>';return}
- box.innerHTML=L.map(function(a){var p=(a.photos||[])[0],s=p&&src(p,1);return '<div class="item"><div class="im">'+(s?'<img src="'+s+'" alt="">':'')+'</div><div><b>'+esc(a.title)+'</b><small><span class="tag '+esc(a.type)+'">'+esc(a.type)+'</span>'+esc(fmt(a.date))+' · '+(a.photos||[]).length+' φωτ.'+((a.files||[]).length?' · '+a.files.length+' PDF':'')+((a.videos||[]).length?' · '+a.videos.length+' βίντεο':'')+(a.album?' · άλμπουμ: '+esc(ALB[a.album]):'')+'</small></div><div class="acts"><button type="button" class="btn sm" data-ed="'+a.id+'">Επεξεργασία</button></div></div>'}).join('');
+ box.innerHTML=L.map(function(a){var p=(a.photos||[])[0],s=p&&src(p,1);return '<div class="item"><div class="im">'+(s?'<img src="'+s+'" alt="">':'')+'</div><div><b>'+esc(a.title)+'</b><small><span class="tag '+esc(a.type)+'">'+esc(a.type)+'</span>'+esc(fmt(a.date))+' · '+(a.photos||[]).length+' φωτ.'+((a.files||[]).length?' · '+a.files.length+' PDF':'')+((a.videos||[]).length?' · '+a.videos.length+' βίντεο':'')+(a.album?' · άλμπουμ: '+esc(ALB[a.album]):'')+'</small></div><div class="acts">'+(MODE==='gh'&&C0&&C0.articles.some(function(x){return x.id===a.id})?'<button type="button" class="btn sm" data-sh="'+a.id+'" title="Σύνδεσμος για Viber, Messenger, email">Κοινοποίηση</button> ':'')+'<button type="button" class="btn sm" data-ed="'+a.id+'">Επεξεργασία</button></div></div>'}).join('');
 }
 function renderAlbs(){
  $('#albList').innerHTML=Object.keys(ALB).map(function(k){
@@ -301,6 +304,10 @@ document.addEventListener('click',function(e){
  if(e.target.closest('[data-cancel]')){if(leaveOk())closeEd();return}
 });
 $('#newArt').addEventListener('click',function(){if(leaveOk())openEd(null)});
+$('#artList').addEventListener('click',function(e){var b=e.target.closest('[data-sh]');if(!b)return;var a=C.articles.find(function(x){return String(x.id)===b.dataset.sh});if(!a)return;var url=shareUrl(a),lb=b.textContent;
+ function ok(t){b.textContent=t;setTimeout(function(){b.textContent=lb},2500)}
+ if(navigator.share){navigator.share({title:a.title,url:url}).catch(function(){});return}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(function(){ok('Αντιγράφηκε ✓')},function(){window.prompt('Αντιγράψτε τον σύνδεσμο:',url)});else window.prompt('Αντιγράψτε τον σύνδεσμο:',url)});
 ['#fT','#fD','#fA','#fV'].forEach(function(s){$(s).addEventListener('input',function(){dDirty=true})});document.querySelectorAll('input[name=ty]').forEach(function(r){r.addEventListener('change',function(){dDirty=true})});
 $('#fT').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ED.focus()}});
 /* Ενημέρωση σχεδίου: νέο index.html, με τις τρέχουσες αναρτήσεις */
@@ -440,8 +447,35 @@ function merge(R){/* R: το περιεχόμενο όπως είναι τώρα
   (C.albums[k]||[]).forEach(function(p){if(!bs[p.f]&&!have[p.f])list.push(p)});if(list.length)al[k]=list});
  ids=Object.keys(out);return {v:1,articles:ids.map(function(id){return out[id]}),albums:al};
 }
+/* ===== Κάρτες κοινοποίησης: για κάθε άρθρο μια μικρή σελίδα nea/ID.html με τίτλο, φωτογραφία και περίληψη,
+   ώστε Viber, Facebook, WhatsApp και Google να δείχνουν το σωστό άρθρο. Ο επισκέπτης μεταφέρεται αμέσως στο άρθρο. ===== */
+function plain(h){try{return (new DOMParser().parseFromString('<div>'+h+'</div>','text/html').body.textContent||'').replace(/\s+/g,' ').trim()}catch(e){return ''}}
+function excerpt(a){var t=plain(a.html!=null?sanitize(a.html):md(a.text));if(t.length<=160)return t;t=t.slice(0,157);var i=t.lastIndexOf(' ');return (i>100?t.slice(0,i):t)+'…'}
+function card(a,B){var url=B+'nea/'+a.id+'.html',P=(a.photos||[])[0],img=P&&a.og===P.f?B+'nea/'+a.id+'.jpg':B+'og-image.jpg',d=excerpt(a)||'Νέα από την Κατασκήνωση «ΘΑΒΩΡ» της Ιεράς Μητροπόλεως Αργολίδος.',back='../#arthro-'+a.id,T=esc(a.title);
+ return '<!DOCTYPE html>\n<html lang="el"><head><meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>'+T+' · Κατασκήνωση «ΘΑΒΩΡ»</title>\n<meta name="description" content="'+esc(d)+'">\n<link rel="canonical" href="'+esc(url)+'">\n'+
+ '<meta property="og:type" content="article">\n<meta property="og:locale" content="el_GR">\n<meta property="og:site_name" content="Κατασκήνωση «ΘΑΒΩΡ» · Ιερά Μητρόπολη Αργολίδος">\n<meta property="og:title" content="'+T+'">\n<meta property="og:description" content="'+esc(d)+'">\n<meta property="og:url" content="'+esc(url)+'">\n<meta property="og:image" content="'+esc(img)+'">\n'+
+ (img.slice(-4)==='.jpg'&&P&&a.og===P.f?'<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n':'')+'<meta property="og:image:alt" content="'+T+'">\n<meta property="article:published_time" content="'+esc(a.date)+'">\n<meta name="twitter:card" content="summary_large_image">\n'+
+ '<scr'+'ipt>if(!/bot|crawl|spider|slurp|preview|facebookexternalhit|embed|whatsapp|viber|telegram|discord|skype/i.test(navigator.userAgent))location.replace('+JSON.stringify(back)+')<\/script>\n'+
+ '<style>body{font:17px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:720px;margin:32px auto;padding:0 20px;color:#16323a}img{max-width:100%;height:auto;border-radius:16px}a{color:#0b6a8a}h1{line-height:1.25}.m{color:#5b7279}</style>\n</head><body>\n'+
+ '<p><a href="'+esc(back)+'">← Το άρθρο στο site της Κατασκήνωσης «ΘΑΒΩΡ»</a></p>\n<article><p class="m">'+esc(a.type)+' · '+esc(fmt(a.date))+'</p><h1>'+T+'</h1>'+(P?'<img src="../photos/'+encodeURIComponent(P.f)+'.'+(P.x||'webp')+'" alt="'+esc(P.alt||a.title)+'">':'')+(a.html!=null?sanitize(a.html):md(a.text))+'</article>\n</body></html>\n'}
+function sitemap(B){return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<url><loc>'+esc(B)+'</loc></url>\n'+sorted().map(function(a){return '<url><loc>'+esc(B+'nea/'+a.id+'.html')+'</loc><lastmod>'+esc(a.date)+'</lastmod></url>\n'}).join('')+'</urlset>\n'}
+function gitSha(u){if(!(window.crypto&&crypto.subtle))return Promise.resolve('');var h=new TextEncoder().encode('blob '+u.length+'\0'),all=new Uint8Array(h.length+u.length);all.set(h);all.set(u,h.length);
+ return crypto.subtle.digest('SHA-1',all).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return ('0'+x.toString(16)).slice(-2)}).join('')},function(){return ''})}
+function photoBlob(P,have){if(newImg[P.f])return Promise.resolve(newImg[P.f].b);var path='photos/'+P.f+'.'+(P.x||'webp');if(!have[path])return Promise.reject(new Error('missing'));
+ return api('git/blobs/'+have[path]).then(function(j){var s=atob(String(j.content||'').replace(/\s/g,'')),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return new Blob([u],{type:P.x==='jpg'?'image/jpeg':'image/webp'})})}
+function shareImg(blob){return bitmap(blob).then(function(b){var W=1200,H=630,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d'),k=Math.max(W/b.width,H/b.height),w=b.width*k,h=b.height*k;x.fillStyle='#fff';x.fillRect(0,0,W,H);x.drawImage(b,(W-w)/2,(H-h)/2,w,h);
+ return new Promise(function(res){c.toBlob(function(bl){res(bl)},'image/jpeg',.82)})})}
+function cards(have,B){var up=[],keep={'sitemap.xml':1},te=new TextEncoder();
+ var jobs=C.articles.map(function(a){var P=(a.photos||[])[0],jp='nea/'+a.id+'.jpg';keep['nea/'+a.id+'.html']=1;
+  if(!P){if(a.og)delete a.og;return null}keep[jp]=1;if(have[jp]&&a.og===P.f)return null;
+  return function(){return photoBlob(P,have).then(shareImg).then(function(bl){if(!bl)return;a.og=P.f;up.push({path:jp,get:function(){return bytes(bl)}})}).catch(function(){if(a.og!==P.f)delete a.og})}}).filter(Boolean);
+ return jobs.reduce(function(pr,j){return pr.then(j)},Promise.resolve()).then(function(){
+  var files=C.articles.map(function(a){return {path:'nea/'+a.id+'.html',u:te.encode(card(a,B))}});files.push({path:'sitemap.xml',u:te.encode(sitemap(B))});
+  return Promise.all(files.map(function(f){return gitSha(f.u).then(function(sh){if(!sh||have[f.path]!==sh)up.push({path:f.path,get:function(){return Promise.resolve(f.u)}})})}))})
+ .then(function(){return {up:up,keep:keep}})}
+function shareUrl(a){return siteBase()+'nea/'+a.id+'.html'}
 function publish(btn,again){
- var R=refs(),html=buildIndex(),base='',tree=null,step=0,total=0;
+ var R=refs(),html='',base='',tree=null,step=0,total=0;
  function say(t){btn.textContent=t}
  say('Έλεγχος…');
  api('git/ref/heads/'+GH.branch).then(function(r){if(r.object.sha===GH.head)return api('git/commits/'+GH.head);
@@ -452,20 +486,22 @@ function publish(btn,again){
    var e=new Error('retry');e.retry=true;throw e})})
  .then(function(c){base=c.tree.sha;return api('git/trees/'+base+'?recursive=1')})
  .then(function(t){
-  var have={};(t.tree||[]).forEach(function(x){if(x.type==='blob')have[x.path]=1});
-  var up=[{path:'index.html',get:function(){return Promise.resolve(new TextEncoder().encode(html))}}];
+  var have={};(t.tree||[]).forEach(function(x){if(x.type==='blob')have[x.path]=x.sha});
+  return (have['CNAME']?api('contents/CNAME?ref='+GH.head,{raw:1}).then(function(c){GH.base=cnameBase(c)},function(){}):Promise.resolve(GH.base='')).then(function(){say('Κάρτες κοινοποίησης…');return cards(have,siteBase())}).then(function(K){
+  html=buildIndex();
+  var up=[{path:'index.html',get:function(){return Promise.resolve(new TextEncoder().encode(html))}}].concat(K.up);
   Object.keys(R).forEach(function(path){if(have[path])return;var m=path.match(/^photos\/(.+?)(_t)?\.(\w+)$/);
    if(m&&newImg[m[1]])up.push({path:path,get:function(){return bytes(m[2]?newImg[m[1]].t:newImg[m[1]].b)}});
    else if(/^files\//.test(path)&&newPdf[path.slice(6)])up.push({path:path,get:function(){return bytes(newPdf[path.slice(6)])}})});
-  var del=Object.keys(have).filter(function(p){return /^(photos|files)\//.test(p)&&!R[p]});
+  var del=Object.keys(have).filter(function(p){return (/^(photos|files)\//.test(p)&&!R[p])||(/^nea\//.test(p)&&!K.keep[p])||(p==='sitemap.xml'&&!K.keep[p])});
   total=up.length;tree=del.map(function(p){return {path:p,mode:'100644',type:'blob',sha:null}});
   return up.reduce(function(pr,u){return pr.then(function(){step++;say('Ανέβασμα '+step+'/'+total+'…');return u.get().then(function(d){return api('git/blobs',{method:'POST',body:{content:b64(d),encoding:'base64'}})}).then(function(b){tree.push({path:u.path,mode:'100644',type:'blob',sha:b.sha})})})},Promise.resolve());
- })
+ })})
  .then(function(){say('Ολοκλήρωση…');return api('git/trees',{method:'POST',body:{base_tree:base,tree:tree}})})
  .then(function(t){return api('git/commits',{method:'POST',body:{message:summary(),tree:t.sha,parents:[GH.head]}})})
  .then(function(c){return api('git/refs/heads/'+GH.branch,{method:'PATCH',body:{sha:c.sha,force:false}}).then(function(){return c})})
  .then(function(c){GH.head=c.sha;indexText=html;C0=clone(C);tplNew=false;newImg={};newPdf={};dirty=0;stats();btn.textContent=SAVE_LBL.gh;renderAll();
-  var site='https://'+GH.repo.split('/')[0].toLowerCase()+'.github.io/'+GH.repo.split('/')[1]+'/';
+  var site=siteBase();
   var box=$('#donebox');box.className='done';box.hidden=false;box.innerHTML='<b>Δημοσιεύτηκε!'+(again?' (μαζί με αλλαγές που είχε κάνει άλλος στο μεταξύ)':'')+'</b><p style="margin:6px 0 0">Συνήθως σε 1–2 λεπτά οι αλλαγές φαίνονται στο site: <a href="'+site+'#nea" target="_blank" rel="noopener">άνοιγμα του site ↗</a>. Αν δεν τις δείτε, ανανεώστε τη σελίδα σε λίγα λεπτά.</p>';box.scrollIntoView({behavior:'smooth',block:'nearest'})})
  .catch(function(e){if(e.retry){publish(btn,true);return}btn.disabled=false;btn.textContent=SAVE_LBL.gh;var box=$('#donebox');box.className='done bad';box.hidden=false;
   box.innerHTML='<b>Η δημοσίευση δεν έγινε.</b><p style="margin:6px 0 0">'+esc(ghErr(e))+(e.status===409||e.status===422?' Οι αλλαγές σας είναι ακόμη εδώ. Πατήστε ξανά «Δημοσίευση στο site» σε λίγο.':'')+'</p>';box.scrollIntoView({behavior:'smooth',block:'nearest'})});
