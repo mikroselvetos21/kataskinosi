@@ -807,6 +807,14 @@ footer.site-f .wrap{position:relative;z-index:1;max-width:1200px}
 .sides .side{min-height:120px}
 @media (max-width:900px){.sides{display:none}}
 
+
+/* Φωτογραφία-τίτλος και σλάιντ της Αρχικής: κάνουν κι αυτά fade σε κάθε σκρολάρισμα, αλλά σβήνει και ξαναεμφανίζεται
+   μόνο το περιεχόμενό τους (φωτογραφία, τίτλος). Το σκούρο φόντο τους μένει πάντα στη θέση του, οπότε δεν φαίνεται ποτέ λευκό. */
+.hero2.fade:not(.in),.reel.fade:not(.in){opacity:1}
+.hero2.fade.in,.reel.fade.in{animation:none}
+.hero2.fade:not(.in)>*,.reel.fade:not(.in)>*{opacity:0}
+.hero2.fade.in>*,.reel.fade.in>*{animation:fxIn .9s cubic-bezier(.2,0,.5,1) backwards;animation-delay:inherit}
+@media (prefers-reduced-motion:reduce){.hero2.fade>*,.reel.fade>*{opacity:1!important;animation:none!important}}
 </style>
 </head>
 <body>
