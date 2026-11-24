@@ -77,7 +77,8 @@ textarea{min-height:240px;resize:vertical;line-height:1.6}
 .files{display:grid;gap:8px;margin-top:10px}
 .vin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .vrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px}
-.vrow img{width:96px;height:54px;object-fit:cover;border-radius:8px;background:var(--line);display:block}
+.vrow img,.vrow .vext{width:96px;height:54px;object-fit:cover;border-radius:8px;background:var(--line);display:block}
+.vrow .vext{display:grid;place-items:center;font-size:1.4rem}
 .vrow a{color:var(--sea);font-weight:600;word-break:break-all}
 .fi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .formacts{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:8px;padding-top:18px;border-top:1px solid var(--line)}
@@ -188,9 +189,9 @@ details.how ol{margin:10px 0 0;padding-left:1.3em}details.how li{margin:0 0 6px}
   <div class="f"><span class="l">Συνημμένα PDF (π.χ. αιτήσεις, έντυπα)</span>
    <div><label class="btn sm">+ Προσθήκη PDF<input type="file" id="fF" accept="application/pdf,.pdf" multiple hidden></label></div>
    <div class="files" id="flist"></div></div>
-  <div class="f"><label class="l" for="fV">Βίντεο YouTube</label>
+  <div class="f"><label class="l" for="fV">Βίντεο (YouTube ή σύνδεσμος από άλλο site)</label>
    <div class="vin"><input type="url" id="fV" inputmode="url" autocomplete="off" placeholder="Επικολλήστε εδώ τον σύνδεσμο του βίντεο"><button type="button" class="btn sm" id="fVadd">Προσθήκη</button></div>
-   <p class="help">Στο YouTube πατήστε «Κοινοποίηση» → «Αντιγραφή συνδέσμου». Το βίντεο πρέπει να είναι «Δημόσιο» ή «Μη καταχωρισμένο». Στο site εμφανίζεται κάτω από το κείμενο και παίζει όταν το πατήσει ο επισκέπτης.</p>
+   <p class="help"><b>YouTube:</b> «Κοινοποίηση» → «Αντιγραφή συνδέσμου». Το βίντεο παίζει μέσα στη σελίδα· πρέπει να είναι «Δημόσιο» ή «Μη καταχωρισμένο». <b>Άλλο site</b> (π.χ. PemptousiaTV): αντιγράψτε τη διεύθυνση της σελίδας του βίντεο· στο άρθρο θα εμφανίζεται κουμπί που την ανοίγει σε νέα καρτέλα.</p>
    <p id="verr" class="err" role="alert"></p>
    <div class="files" id="vlist"></div></div>
   <p id="ederr" class="err" role="alert"></p>
@@ -386,10 +387,16 @@ function ytId(u){u=String(u||'').trim();if(/^[A-Za-z0-9_-]{11}$/.test(u))return 
  if(x=r.match(/^watch\?(?:[^#]*&)?v=([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/))return x[1];
  if(x=r.match(/^(?:embed|shorts|live|v)\/([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/))return x[1];
  return ''}
-function drawVideos(){$('#vlist').innerHTML=(draft.videos||[]).map(function(v,i){return '<div class="vrow"><img src="https://i.ytimg.com/vi/'+v+'/mqdefault.jpg" alt="" onerror="this.style.visibility=\'hidden\'"><a href="https://youtu.be/'+v+'" target="_blank" rel="noopener">youtu.be/'+v+' ↗</a><button type="button" class="btn sm danger" data-vrm="'+i+'">Αφαίρεση</button></div>'}).join('')}
-function addVideo(){var u=$('#fV').value.trim();$('#verr').textContent='';if(!u)return true;var id=ytId(u);
- if(!id){$('#verr').textContent='Αυτός ο σύνδεσμος δεν είναι βίντεο του YouTube. Αντιγράψτε τον από το κουμπί «Κοινοποίηση» του βίντεο.';$('#fV').focus();return false}
- if(draft.videos.indexOf(id)<0)draft.videos.push(id);$('#fV').value='';dDirty=true;drawVideos();return true}
+/* Σύνδεσμος από άλλο site: δεν παίζει μέσα στη σελίδα, ανοίγει τη σελίδα του βίντεο */
+function extLink(u){u=String(u||'').trim();if(!/^https?:\/\/[^\s]+$/i.test(u))return null;try{var x=new URL(u);if(!/\./.test(x.hostname)||isYT(x.hostname))return null;return {u:x.href,s:x.hostname.replace(/^www\./,'')}}catch(e){return null}}
+function isYT(h){return /(^|\.)(youtube\.com|youtube-nocookie\.com|youtu\.be)$/i.test(h)}
+function vidParse(u){var id=ytId(u);if(id)return id;return extLink(u)||''}
+function drawVideos(){$('#vlist').innerHTML=(draft.videos||[]).map(function(v,i){var rm='<button type="button" class="btn sm danger" data-vrm="'+i+'">Αφαίρεση</button>';
+ if(typeof v==='string')return '<div class="vrow"><img src="https://i.ytimg.com/vi/'+v+'/mqdefault.jpg" alt="" onerror="this.style.visibility=\'hidden\'"><div><a href="https://youtu.be/'+v+'" target="_blank" rel="noopener">youtu.be/'+v+' ↗</a><small class="hint" style="display:block">YouTube · παίζει μέσα στη σελίδα</small></div>'+rm+'</div>';
+ return '<div class="vrow"><span class="vext" aria-hidden="true">🔗</span><div><a href="'+esc(v.u)+'" target="_blank" rel="noopener">'+esc(v.s)+' ↗</a><small class="hint" style="display:block">Άλλο site · στο άρθρο θα ανοίγει τη σελίδα του βίντεο σε νέα καρτέλα</small></div>'+rm+'</div>'}).join('')}
+function addVideo(){var u=$('#fV').value.trim();$('#verr').textContent='';if(!u)return true;var v=vidParse(u);
+ if(!v){var yt=false;try{yt=isYT(new URL(u).hostname)}catch(e){}$('#verr').textContent=yt?'Αυτός ο σύνδεσμος του YouTube δεν δείχνει σε ένα συγκεκριμένο βίντεο (μάλλον είναι κανάλι ή λίστα). Ανοίξτε το βίντεο και πατήστε «Κοινοποίηση» → «Αντιγραφή συνδέσμου».':'Αυτό δεν είναι σωστός σύνδεσμος. Αντιγράψτε ολόκληρη τη διεύθυνση (ξεκινά με https://) από τη σελίδα του βίντεο.';$('#fV').focus();return false}
+ var k=JSON.stringify(v);if(!draft.videos.some(function(x){return JSON.stringify(x)===k}))draft.videos.push(v);$('#fV').value='';dDirty=true;drawVideos();return true}
 $('#fVadd').addEventListener('click',addVideo);
 $('#fV').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addVideo()}});
 $('#vlist').addEventListener('click',function(e){var b=e.target.closest('[data-vrm]');if(b){draft.videos.splice(+b.dataset.vrm,1);dDirty=true;drawVideos()}});
