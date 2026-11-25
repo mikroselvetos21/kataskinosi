@@ -1152,17 +1152,22 @@ var per=(f.querySelector('input[name=period]:checked')||{}).value||'geniko',PL=P
 var TOS=per==='geniko'?[INBOX.agoria,INBOX.koritsia]:[INBOX[per]];
 var subj='['+PL+'] '+(v('subject')||'Μήνυμα από τον ιστότοπο της Κατασκήνωσης');
 btn.disabled=true;msg.style.color='var(--ink)';msg.textContent='Αποστολή...';
+var needAct=false;
 try{
 var okSend=false;
 var payload=JSON.stringify({_subject:subj,_captcha:'false',_template:'table',period:PL,name:v('name'),email:v('email'),phone:v('phone'),message:v('msg')});
-var res=await Promise.all(TOS.map(function(to){return fetch('https://formsubmit.co/ajax/'+to,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:payload}).then(function(r){return r.json()}).then(function(d){return !!d&&(d.success===true||d.success==='true')}).catch(function(){return false})}));
-okSend=res.some(Boolean);
+/* Κάθε αποστολή περιμένει έως 20 δευτερόλεπτα· κρατάμε και το μήνυμα του FormSubmit για να ξέρουμε γιατί απέτυχε */
+var res=await Promise.all(TOS.map(function(to){var ac=window.AbortController?new AbortController():null,tm=setTimeout(function(){if(ac)ac.abort()},20000);
+ return fetch('https://formsubmit.co/ajax/'+to,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:payload,signal:ac?ac.signal:undefined}).then(function(r){return r.json()}).then(function(d){return {ok:!!d&&(d.success===true||d.success==='true'),m:String(d&&d.message||'')}}).catch(function(x){return {ok:false,m:x&&x.name==='AbortError'?'timeout':'network'}}).finally(function(){clearTimeout(tm)})}));
+okSend=res.some(function(x){return x.ok});
+var why=res.filter(function(x){return !x.ok}).map(function(x){return x.m}).join(' | ');if(why)try{console.warn('FormSubmit:',why)}catch(e4){}
+needAct=/activ/i.test(why);
 if(okSend){lastSent=Date.now();try{localStorage.setItem(LK,String(lastSent))}catch(e3){}t0=0;f.reset();msg.style.color='#1a7a3a';msg.textContent='Το μήνυμά σας εστάλη. Σας ευχαριστούμε!';mt=setTimeout(function(){msg.classList.add('out');mt=setTimeout(function(){msg.textContent='';msg.classList.remove('out')},400)},4600);cool();return}
 throw new Error('fail')
 }catch(err){
 var body='Αφορά: '+PL+'\nΟνοματεπώνυμο: '+v('name')+'\nEmail: '+v('email')+'\nΤηλέφωνο: '+v('phone')+'\n\n'+v('msg');
 var a=document.createElement('a');a.href='mailto:'+TOS.join(',')+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
-msg.style.color='#c00000';msg.textContent='Δεν ήταν δυνατή η αυτόματη αποστολή. Ετοιμάσαμε το μήνυμα στο πρόγραμμα email σας, πατήστε «Αποστολή» εκεί.';btn.disabled=false}
+msg.style.color='#c00000';msg.textContent=(needAct?'Η φόρμα δεν έχει ενεργοποιηθεί ακόμα στην υπηρεσία αποστολής (FormSubmit). ':'Δεν ήταν δυνατή η αυτόματη αποστολή. ')+'Ετοιμάσαμε το μήνυμα στο πρόγραμμα email σας, πατήστε «Αποστολή» εκεί.';btn.disabled=false}
 });
 })();
 (function(){document.querySelectorAll('[data-car]').forEach(function(b){b.addEventListener('click',function(){var t=document.getElementById(b.dataset.car),d=Number(b.dataset.dir),w=t.clientWidth;if(d>0&&t.scrollLeft>=t.scrollWidth-w-4)t.scrollTo({left:0,behavior:'smooth'});else if(d<0&&t.scrollLeft<=4)t.scrollTo({left:t.scrollWidth,behavior:'smooth'});else t.scrollBy({left:d*w,behavior:'smooth'})})})})();
