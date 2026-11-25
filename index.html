@@ -843,6 +843,13 @@ footer.site-f .wrap{position:relative;z-index:1;max-width:1200px}
 @media (max-width:420px){#v-polymesa .pmgrid{gap:16px}}
 /* Νέα και Άρθρα: ίδια μεγαλύτερα κενά ανάμεσα στις κάρτες */
 #v-nea .artgrid{gap:clamp(28px,2.8vw,40px)}
+/* Footer · Επικοινωνία: η Μητρόπολη με μπλε γράμματα όπως αριστερά, βελάκι και στα δύο links (χωρίς τον σύνδεσμο της Μητρόπολης, που υπάρχει ήδη στην πάνω μπάρα) */
+.site-f .fcontact .faorg{font-weight:700;color:var(--sea-d)}
+.site-f .fcontact address{line-height:1.55}
+@media (min-width:1101px){.fgrid{grid-template-columns:minmax(0,1.45fr) repeat(2,minmax(0,.95fr)) minmax(0,1.25fr)}}
+@media (min-width:801px) and (max-width:1100px){.fgrid{grid-template-columns:minmax(0,1fr) minmax(0,.85fr) minmax(0,1.25fr)}}
+@media (min-width:561px) and (max-width:800px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.site-f .fcontact{grid-column:1/-1}}
+
 </style>
 </head>
 <body>
@@ -864,7 +871,7 @@ footer.site-f .wrap{position:relative;z-index:1;max-width:1200px}
 <h1 class="sr">Κατασκήνωση «ΘΑΒΩΡ» της Ιεράς Μητροπόλεως Αργολίδος</h1>
 <!-- Κάθε φωτογραφία είναι ένα <figure class="slide">: η εικόνα (img class="ph") και η λεζάντα της (τίτλος .ct, υπότιτλος .cs) -->
 <div class="stage" id="reel">
-<figure class="slide on"><div class="ph" role="img" aria-label="Ηλιοβασίλεμα πάνω από τις κορυφές των βουνών γύρω από την Κατασκήνωση" style="background-image:var(--p0898)"></div><figcaption><span class="ct">Κατασκήνωση «ΘΑΒΩΡ»</span><span class="cs">Ιερά Μητρόπολη Αργολίδος · Όρος Φαρμακάς, 1.050 μ.</span></figcaption></figure>
+<figure class="slide on"><div class="ph" role="img" aria-label="Ηλιοβασίλεμα πάνω από τις κορυφές των βουνών γύρω από την Κατασκήνωση" style="background-image:var(--p0898)"></div><figcaption><span class="ct">Κατασκήνωση «ΘΑΒΩΡ»</span><span class="cs">Ιερά Μητρόπολις Αργολίδος · Όρος Φαρμακάς, 1.050 μ.</span></figcaption></figure>
 <figure class="slide"><div class="ph" role="img" aria-label="Οι αθλητικοί χώροι της Κατασκήνωσης μέσα στο ελατοδάσος, από ψηλά" style="background-image:var(--p0064)"></div><figcaption><span class="ct">Στην καρδιά του ελατοδάσους</span><span class="cs">Δροσερά πρωινά και καθαρός αέρας, μακριά από τη ζέστη της πόλης</span></figcaption></figure>
 <figure class="slide"><div class="ph" role="img" aria-label="Παιδιά παίζουν ποδόσφαιρο, μπάσκετ και βόλεϊ στα γήπεδα της Κατασκήνωσης" style="background-image:var(--p0028)"></div><figcaption><span class="ct">Παίζοντας μαθαίνουμε τη ζωή</span><span class="cs">Αθλήματα, παιχνίδια, θέατρο και μουσικές βραδιές</span></figcaption></figure>
 <figure class="slide"><div class="ph tmpf" style="background-image:var(--p0064)"></div><figcaption><span class="ct">Με πίστη και αδελφοσύνη</span><span class="cs">Η Θεία Λειτουργία στον Ιερό Ναό Αγίας Παρασκευής της Κατασκήνωσης</span></figcaption></figure>
@@ -921,7 +928,7 @@ footer.site-f .wrap{position:relative;z-index:1;max-width:1200px}
 </g></svg>
 <div class="wrap">
 <div class="fgrid">
-<div class="fbrand"><span class="fseals"><span class="fseal" aria-hidden="true"></span><span class="fseal fmet" aria-hidden="true"></span></span><div class="fbtxt"><p class="fname">Κατασκήνωση «ΘΑΒΩΡ»</p><p class="forg">Ιερά Μητρόπολη Αργολίδος</p><p class="ftag">Στις πλαγιές του όρους Φαρμακά, στα 1.050 μέτρα, όπου κάθε παιδί παίζοντας μαθαίνει τη ζωή.</p></div><a class="fcta" href="#egrafes" data-go>Εγγραφές 2027<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+<div class="fbrand"><span class="fseals"><span class="fseal" aria-hidden="true"></span><span class="fseal fmet" aria-hidden="true"></span></span><div class="fbtxt"><p class="fname">Κατασκήνωση «ΘΑΒΩΡ»</p><p class="forg">Ιερά Μητρόπολις Αργολίδος</p><p class="ftag">Στις πλαγιές του όρους Φαρμακά, στα 1.050 μέτρα, όπου κάθε παιδί παίζοντας μαθαίνει τη ζωή.</p></div><a class="fcta" href="#egrafes" data-go>Εγγραφές 2027<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
 <div class="fcol"><h2 class="fh">Γνωρίστε μας</h2><ul>
 <li><a href="#" data-go data-sec="a-minima">Μήνυμα του Μητροπολίτη</a></li>
 <li><a href="#" data-go data-sec="a-thavor">Γιατί «ΘΑΒΩΡ»</a></li>
@@ -935,14 +942,13 @@ footer.site-f .wrap{position:relative;z-index:1;max-width:1200px}
 <li><a href="#egrafes" data-go data-sec="e-efodia">Εφόδια κατασκηνωτή</a></li>
 <li><button type="button" data-terms>Όροι συμμετοχής</button></li>
 </ul></div>
-<div class="fcol"><h2 class="fh">Επικοινωνία</h2><p class="flabel">Υπεύθυνος Φορέας</p><address>Ιερά Μητρόπολη Αργολίδος<br>Βασ. Κωνσταντίνου 31, Ναύπλιο</address><ul>
-<li><a href="#epikoinonia" data-go>Στείλτε μας μήνυμα</a></li>
+<div class="fcol fcontact"><h2 class="fh">Επικοινωνία</h2><p class="flabel">Υπεύθυνος Φορέας</p><address><span class="faorg">Ιερά Μητρόπολις Αργολίδος</span><br>Βασ. Κωνσταντίνου 31<br>Ναύπλιο</address><ul>
+<li><a class="fext" href="#epikoinonia" data-go>Στείλτε μας μήνυμα</a></li>
 <li><a class="fext" href="https://maps.app.goo.gl/PXmfQs3LCPNyDZnA8" target="_blank" rel="noopener">Η Κατασκήνωση στον χάρτη</a></li>
-<li><a class="fext" href="https://imargolidos.gr" target="_blank" rel="noopener">imargolidos.gr</a></li>
 </ul></div>
 </div>
 <div class="fbar">
-<p class="fcopy">©2026 Ιερά Μητρόπολη Αργολίδος · Με την επιφύλαξη παντός νομίμου δικαιώματος · All rights reserved</p>
+<p class="fcopy">©2026 Ιερά Μητρόπολις Αργολίδος · Με την επιφύλαξη παντός νομίμου δικαιώματος · All rights reserved</p>
 <p class="flegal"><a href="#gdpr" data-go>GDPR - Προστασία Προσωπικών Δεδομένων</a><a href="#gdpr" data-go data-sec="g-cookies">Πολιτική Cookies</a><button type="button" class="cklink" data-ckopen>Ρυθμίσεις cookies</button></p>
 <p class="fcredit">Ο παρών διαδικτυακός τόπος σχεδιάστηκε και υλοποιήθηκε εθελοντικά από στελέχη της Κατασκηνώσεως</p>
 <button type="button" class="ftop" aria-label="Επιστροφή στην κορυφή"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
