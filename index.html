@@ -246,19 +246,19 @@ img{border-radius:14px}.reel img{border-radius:0}.lb img{border-radius:14px}.sea
 .k3row{display:grid;grid-template-columns:1fr minmax(0,.85fr) 1fr;gap:32px;align-items:start}
 .k3 .kslide{aspect-ratio:3/4}
 @media (max-width:900px){.k3row{grid-template-columns:1fr;gap:12px}.k3row .kmedia{order:3;margin-top:8px}.k3 .kslide{aspect-ratio:4/3}}
-/* Χρώματα ενοτήτων: δύο χρώματα, λευκό και κρεμ #FAF1E2, εναλλάσσονται.
+/* Χρώματα ενοτήτων: δύο χρώματα, λευκό και το αρχικό απαλό κρεμ #FDF8F0, εναλλάσσονται.
    Η εναλλαγή μετράει από το τέλος κάθε σελίδας, ώστε η ενότητα ακριβώς πάνω από το footer (που είναι πάντα κρεμ)
    να είναι ΠΑΝΤΑ λευκή, όσες ενότητες κι αν προστεθούν.
    --sbg: χρώμα της ενότητας · --pbg: χρώμα της από πάνω (για το κυματάκι) · --hbg: χρώμα κάτω από τη φωτογραφία-τίτλο */
-.view>section{--sbg:#FFFFFF;--pbg:#FAF1E2;background:var(--sbg)}
-.view>section:nth-last-of-type(even){--sbg:#FAF1E2;--pbg:#FFFFFF}
+.view>section{--sbg:#FFFFFF;--pbg:#FDF8F0;background:var(--sbg)}
+.view>section:nth-last-of-type(even){--sbg:#FDF8F0;--pbg:#FFFFFF}
 .view>section:first-of-type{--pbg:#FFFFFF}
-.view:has(>section:first-of-type:nth-last-of-type(even)){--hbg:#FAF1E2}
+.view:has(>section:first-of-type:nth-last-of-type(even)){--hbg:#FDF8F0}
 .view h2.h2b{border-top:0;padding-top:0;margin-top:8px}
 .kblock+.kblock{border-top:0;margin-top:0;padding-top:0}
 #v-epikoinonia>section>.wrap{max-width:1144px}@media (max-width:1180px){.contact{gap:clamp(32px,6vw,72px)}}
 .namesec{border-bottom:1px solid rgba(22,50,58,.14)}
-.metbar{background:#FAF1E2;text-align:center;padding:9px 16px;font-size:.9rem}.metbar a{color:var(--sea-d);text-decoration:none;font-weight:700}.metbar a:hover{text-decoration:underline}
+.metbar{background:#faf7f2;text-align:center;padding:9px 16px;font-size:.9rem}.metbar a{color:var(--sea-d);text-decoration:none;font-weight:700}.metbar a:hover{text-decoration:underline}
 /* Hero σελίδων: φωτογραφία με φωτεινό φίλτρο, τίτλος με υπότιτλο, και στη βάση η κορυφογραμμή του βουνού */
 .hero2{display:flex;align-items:center;justify-content:center;height:clamp(320px,34vw,480px);padding:0 20px 34px;background:#0F2C23}
 .hbg{position:absolute;inset:0;overflow:hidden}
@@ -289,7 +289,7 @@ img{border-radius:14px}.reel img{border-radius:0}.lb img{border-radius:14px}.sea
 @media (max-width:600px){.hero2::after{height:26px}.hero2{padding-bottom:24px}}
 .hero2::before{content:"";position:absolute;left:0;right:0;top:-1px;height:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 30' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' d='M0 0H1440V15C1320 30 1200 30 1080 15S840 0 720 15S480 30 360 15S120 0 0 15Z'/%3E%3C/svg%3E") center top/100% 100% no-repeat;pointer-events:none;z-index:2}
 footer.site-f{position:relative}
-footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;height:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 720 30' preserveAspectRatio='none'%3E%3Cpath fill='%23FAF1E2' d='M0 30H720V15C600 0 480 0 360 15S120 30 0 15Z'/%3E%3C/svg%3E") repeat-x;background-size:720px 100%;pointer-events:none;animation:waveMove 16s linear infinite}
+footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;height:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 720 30' preserveAspectRatio='none'%3E%3Cpath fill='%23faf7f2' d='M0 30H720V15C600 0 480 0 360 15S120 30 0 15Z'/%3E%3C/svg%3E") repeat-x;background-size:720px 100%;pointer-events:none;animation:waveMove 16s linear infinite}
 .artgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
 .artcard{background:var(--surface);border-radius:20px;overflow:hidden;border:2px solid var(--line);display:flex;flex-direction:column}
 .artimg{width:100%;aspect-ratio:16/9;background:var(--line)}
@@ -316,7 +316,7 @@ footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;heig
 /* ===== Καρουζέλ Αρχικής: κινηματογραφικό — οι φωτογραφίες σβήνουν ομαλά η μία μέσα στην άλλη ===== */
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .view>.reel{--rbg:#FFFFFF;position:relative;padding:0;height:clamp(500px,84vh,900px);background:#0F2C23;overflow:hidden}
-.view>.reel:has(+section:nth-last-of-type(even)){--rbg:#FAF1E2}
+.view>.reel:has(+section:nth-last-of-type(even)){--rbg:#FDF8F0}
 .view>.reel+section::before{content:none}
 .view>.reel::before{content:"";position:absolute;left:0;right:0;top:-1px;height:30px;z-index:4;background:#FFFFFF;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 30' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1440V15C1320 30 1200 30 1080 15S840 0 720 15S480 30 360 15S120 0 0 15Z'/%3E%3C/svg%3E") center top/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 30' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1440V15C1320 30 1200 30 1080 15S840 0 720 15S480 30 360 15S120 0 0 15Z'/%3E%3C/svg%3E") center top/100% 100% no-repeat;animation:none;pointer-events:none}
 .view>.reel::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:40px;z-index:4;background:var(--rbg);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='44' viewBox='0 36 1440 44'%3E%3Cpath d='M0 62C140 50 260 44 380 52S600 68 720 60 960 40 1080 48 1320 66 1440 62V80H0Z'/%3E%3C/svg%3E") center bottom/auto 100% repeat-x;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1440' height='44' viewBox='0 36 1440 44'%3E%3Cpath d='M0 62C140 50 260 44 380 52S600 68 720 60 960 40 1080 48 1320 66 1440 62V80H0Z'/%3E%3C/svg%3E") center bottom/auto 100% repeat-x;pointer-events:none}
@@ -378,7 +378,7 @@ footer.site-f::before{content:"";position:absolute;left:0;right:0;top:-29px;heig
 .glist>li:first-child{padding-top:4px;border-top:0}.glist>li:last-child{padding-bottom:0}
 .gi{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#fdf3d4;color:#8a6200}
 .gi svg{width:19px;height:19px}
-.excp{margin:12px 0 0;padding:14px 18px 14px 18px;background:#FAF1E2;border:1px solid #efe6d8;border-radius:14px}
+.excp{margin:12px 0 0;padding:14px 18px 14px 18px;background:#faf7f2;border:1px solid #efe6d8;border-radius:14px}
 .rcard .excp p{margin:0 0 8px}
 .excp ul{margin:0;padding-left:22px;list-style:disc}
 @media (max-width:600px){.excp{margin-left:-52px;padding:14px 16px}}
@@ -746,7 +746,7 @@ a.vgate{text-decoration:none}
 .view .nstate{max-width:560px;margin:8px auto 0;padding:40px 26px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed #c9d9dc;border-radius:22px}
 .view .nstate b{display:block;margin-bottom:8px;color:var(--ink)}
 /* ===== Footer: το κλασικό ζεστό κρεμ-ροζ, χρυσές λεπτομέρειες, σιλουέτα του Φαρμακά με τα έλατα ===== */
-footer.site-f{--f1:#FAF1E2;--f2:#FAF1E2;--fc:#16323a;--fm:#3f5d66;--fl:rgba(22,50,58,.12);margin-top:0;color:var(--fc);font-size:.95rem;line-height:1.6;text-align:left;background:radial-gradient(70% 55% at 50% 112%,rgba(255,197,49,.16),transparent 70%),linear-gradient(180deg,var(--f1),var(--f2))}
+footer.site-f{--f1:#faf7f2;--f2:#f6efe5;--fc:#16323a;--fm:#3f5d66;--fl:rgba(22,50,58,.12);margin-top:0;color:var(--fc);font-size:.95rem;line-height:1.6;text-align:left;background:radial-gradient(70% 55% at 50% 112%,rgba(255,197,49,.16),transparent 70%),linear-gradient(180deg,var(--f1),var(--f2))}
 footer.site-f .wrap{position:relative;z-index:1;max-width:1200px}
 .fmount{position:absolute;left:0;bottom:0;width:100%;height:230px;display:block;pointer-events:none}
 .fgrid{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:40px 48px;padding:76px 0 64px}
