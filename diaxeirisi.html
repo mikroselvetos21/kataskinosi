@@ -128,6 +128,45 @@ details.how ol{margin:10px 0 0;padding-left:1.3em}details.how li{margin:0 0 6px}
  main{padding-left:max(clamp(16px,4vw,40px),env(safe-area-inset-left));padding-right:max(clamp(16px,4vw,40px),env(safe-area-inset-right));padding-bottom:calc(120px + env(safe-area-inset-bottom))}
  .savebar{padding-bottom:calc(12px + env(safe-area-inset-bottom));padding-left:max(clamp(16px,4vw,40px),env(safe-area-inset-left));padding-right:max(clamp(16px,4vw,40px),env(safe-area-inset-right))}
 }
+
+/* ---------- Νέα μορφοποίηση κειμένου (όπως στο Samsung Notes) ---------- */
+.rtbar{flex-wrap:wrap;overflow:visible;gap:4px 12px}
+.rtbar .grp{display:flex;align-items:center;gap:2px}
+.rtbar button:disabled{opacity:.35;cursor:default;background:transparent}
+.rtbar .wide{gap:4px;grid-auto-flow:column;min-width:auto;padding:0 10px;font-size:.92rem;font-weight:700;border:1px solid #cfdcdf;background:#fff;height:38px;margin:0 2px}
+.rtbar .wide #rtStyle{min-width:6.2em;text-align:left}
+.rtbar .cr{width:10px;height:6px}
+.rtbar .aa{grid-auto-flow:column;gap:3px;font-weight:800}
+.rtbar .aa small{font-size:.68em;margin-left:1px}
+.rtbar .s{text-decoration:line-through;font-weight:700}
+.rtbar .clr .ca{position:relative;display:grid;place-items:center;font-weight:800;line-height:1;padding-bottom:5px}
+.rtbar .clr .ca i{position:absolute;left:50%;bottom:-1px;width:20px;height:4px;margin-left:-10px;border-radius:2px;background:var(--ink);box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.rtbar .clr #rtHl{background:#fff2a8}
+.rtbar .hlsvg{width:19px!important;height:19px!important}
+.rtbar button[aria-expanded="true"]{background:#dbe8eb}
+.rtpop{flex:0 0 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px;padding:8px 4px 4px;border-top:1px solid #d6e2e4}
+.rtpop[hidden]{display:none}
+.rtpop .st,.rtpop .sz{min-width:auto;height:auto;min-height:40px;padding:6px 12px;border:1px solid #cfdcdf;background:#fff;color:var(--ink);font-size:.95rem}
+.rtpop .st-h2{font-size:1.15rem;font-weight:800}
+.rtpop .st-h3{font-weight:800;color:var(--sea)}
+.rtpop .st-blockquote{font-style:italic;border-left:4px solid var(--sea)}
+.rtpop .sz-s{font-size:.8rem}.rtpop .sz-l{font-size:1.1rem}.rtpop .sz-xl{font-size:1.35rem;font-weight:700}
+.rtpop .st[aria-pressed="true"]{background:var(--sea);border-color:var(--sea);color:#fff}
+.rtpop .sw{min-width:40px;width:40px;height:40px;padding:0;border-radius:50%}
+.rtpop .sw i{display:block;width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.sw.tc-auto i{background:var(--ink)}.sw.tc-red i{background:#c62828}.sw.tc-orange i{background:#c2410c}.sw.tc-green i{background:#2e7d32}.sw.tc-blue i{background:#1565c0}.sw.tc-purple i{background:#6a1b9a}.sw.tc-brown i{background:#6d4c41}.sw.tc-gray i{background:#5f6b70}
+.sw.hl-none i{background:#fff linear-gradient(135deg,transparent 45%,#c62828 45%,#c62828 55%,transparent 55%)}.sw.hl-yellow i{background:#fff2a8}.sw.hl-green i{background:#d4f5d0}.sw.hl-blue i{background:#d3ecfa}.sw.hl-pink i{background:#fadce6}.sw.hl-orange i{background:#ffe2c2}
+.rte h2{margin:18px 0 10px;color:var(--ink);font-size:1.45rem;line-height:1.3}
+.rte blockquote{margin:0;padding:4px 14px;border-left:4px solid var(--sea);background:#f3f7f8;color:#2f4b53;font-style:italic}
+.rte blockquote:not(:has(+blockquote)){margin-bottom:10px}
+.rte s,.rte strike{text-decoration:line-through}
+.rte .in1{margin-left:2em}.rte .in2{margin-left:4em}.rte .in3{margin-left:6em}
+.rte ul.todo{list-style:none;padding-left:0}
+.rte ul.todo>li{position:relative;padding-left:1.9em}
+.rte ul.todo>li::before{content:"";position:absolute;left:.1em;top:.28em;width:1.15em;height:1.15em;box-sizing:border-box;border:2px solid var(--sea);border-radius:5px;background:#fff;cursor:pointer}
+.rte ul.todo>li.todo-done::before{background:var(--sea) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/85% no-repeat}
+.rte ul.todo>li.todo-done{color:#6b8187}
+@media (max-width:640px){.rtbar{gap:2px 8px}.rtbar .grp{gap:0}.rtbar .wide{padding:0 7px;height:36px}.rtbar .wide #rtStyle{min-width:5em}.rtpop .sw{width:38px;min-width:38px;height:38px}}
 </style>
 </head>
 <body>
@@ -180,7 +219,7 @@ details.how ol{margin:10px 0 0;padding-left:1.3em}details.how li{margin:0 0 6px}
    <div class="f"><label class="l" for="fD">Ημερομηνία</label><input type="date" id="fD" required></div>
    <div class="f"><span class="l">Είδος</span><div class="seg"><label><input type="radio" name="ty" value="Νέα" checked> Νέα</label><label><input type="radio" name="ty" value="Ανακοίνωση"> Ανακοίνωση</label><label><input type="radio" name="ty" value="Άρθρο"> Άρθρο</label></div></div>
   </div>
-  <div class="f"><span class="l" id="fXl">Κείμενο</span><div id="fX" class="rte empty" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="fXl" data-ph="Γράψτε εδώ το κείμενο…" spellcheck="true"></div><div class="rtbar" id="rtbar" role="toolbar" aria-label="Μορφοποίηση κειμένου"><button type="button" data-cmd="bold" class="b" title="Έντονα (Ctrl+B)" aria-label="Έντονα" aria-pressed="false">B</button><button type="button" data-cmd="italic" class="i" title="Πλάγια (Ctrl+I)" aria-label="Πλάγια" aria-pressed="false">I</button><button type="button" data-cmd="underline" class="u" title="Υπογράμμιση (Ctrl+U)" aria-label="Υπογράμμιση" aria-pressed="false">U</button><span class="sep"></span><button type="button" data-cmd="h3" class="h" title="Υπότιτλος" aria-label="Υπότιτλος" aria-pressed="false"><span>Τ<sub>1</sub></span></button><button type="button" data-cmd="insertUnorderedList" title="Κουκκίδες" aria-label="Κουκκίδες" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="6.5" r="1.2" fill="currentColor"/><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="5" cy="17.5" r="1.2" fill="currentColor"/><path d="M10 6.5h10M10 12h10M10 17.5h10"/></svg></button><button type="button" data-cmd="insertOrderedList" title="Αρίθμηση" aria-label="Αρίθμηση" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="M4 5l1.5-1v5M3.5 13.5c0-1 .7-1.5 1.5-1.5s1.4.6 1.2 1.4L3.5 16h3" stroke-width="1.6"/></svg></button><span class="sep"></span><button type="button" data-cmd="link" title="Σύνδεσμος" aria-label="Σύνδεσμος"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button><button type="button" data-cmd="clear" title="Αφαίρεση μορφοποίησης" aria-label="Αφαίρεση μορφοποίησης"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h12M12 5l-3 14M15 15l5 5M20 15l-5 5"/></svg></button></div><p class="help">Επιλέξτε λέξεις και πατήστε τα κουμπιά για μορφοποίηση. Οι διευθύνσεις (https://…) και τα email γίνονται αυτόματα σύνδεσμοι.</p></div>
+  <div class="f"><span class="l" id="fXl">Κείμενο</span><div id="fX" class="rte empty" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="fXl" data-ph="Γράψτε εδώ το κείμενο…" spellcheck="true"></div><div class="rtbar" id="rtbar" role="toolbar" aria-label="Μορφοποίηση κειμένου"><span class="grp"><button type="button" data-cmd="undo" title="Αναίρεση (Ctrl+Z)" aria-label="Αναίρεση" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button><button type="button" data-cmd="redo" title="Επανάληψη (Ctrl+Y)" aria-label="Επανάληψη" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button></span><span class="grp"><button type="button" data-pop="style" class="wide" title="Στυλ παραγράφου" aria-label="Στυλ παραγράφου" aria-haspopup="true" aria-expanded="false"><span id="rtStyle">Κείμενο</span><svg class="cr" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" data-pop="size" class="aa" title="Μέγεθος γραμμάτων" aria-label="Μέγεθος γραμμάτων" aria-haspopup="true" aria-expanded="false"><span>A<small>A</small></span><svg class="cr" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></span><span class="grp"><button type="button" data-cmd="bold" class="b" title="Έντονα (Ctrl+B)" aria-label="Έντονα" aria-pressed="false">B</button><button type="button" data-cmd="italic" class="i" title="Πλάγια (Ctrl+I)" aria-label="Πλάγια" aria-pressed="false">I</button><button type="button" data-cmd="underline" class="u" title="Υπογράμμιση (Ctrl+U)" aria-label="Υπογράμμιση" aria-pressed="false">U</button><button type="button" data-cmd="strikeThrough" class="s" title="Διακριτή διαγραφή" aria-label="Διακριτή διαγραφή" aria-pressed="false">S</button></span><span class="grp"><button type="button" data-pop="color" class="clr" title="Χρώμα γραμμάτων" aria-label="Χρώμα γραμμάτων" aria-haspopup="true" aria-expanded="false"><span class="ca">A<i id="rtTc"></i></span></button><button type="button" data-pop="hl" class="clr" title="Επισήμανση (χρώμα φόντου)" aria-label="Επισήμανση" aria-haspopup="true" aria-expanded="false"><span class="ca"><svg class="hlsvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg><i id="rtHl"></i></span></button></span><span class="grp"><button type="button" data-cmd="insertUnorderedList" title="Κουκκίδες" aria-label="Κουκκίδες" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="6.5" r="1.2" fill="currentColor"/><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="5" cy="17.5" r="1.2" fill="currentColor"/><path d="M10 6.5h10M10 12h10M10 17.5h10"/></svg></button><button type="button" data-cmd="insertOrderedList" title="Αρίθμηση" aria-label="Αρίθμηση" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="M4 5l1.5-1v5M3.5 13.5c0-1 .7-1.5 1.5-1.5s1.4.6 1.2 1.4L3.5 16h3" stroke-width="1.6"/></svg></button><button type="button" data-cmd="chk" title="Λίστα ελέγχου" aria-label="Λίστα ελέγχου" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7h9M12 17h9"/><rect x="3" y="4" width="6" height="6" rx="1.4"/><path d="m4.6 7 1.3 1.3 2.2-2.4" stroke-width="1.7"/><rect x="3" y="14" width="6" height="6" rx="1.4"/></svg></button></span><span class="grp"><button type="button" data-cmd="outdent" title="Μείωση εσοχής" aria-label="Μείωση εσοχής"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 6H11M21 12H11M21 18H11"/><path d="m7 8-4 4 4 4"/></svg></button><button type="button" data-cmd="indent" title="Αύξηση εσοχής" aria-label="Αύξηση εσοχής"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 6H11M21 12H11M21 18H11"/><path d="m3 8 4 4-4 4"/></svg></button></span><span class="grp"><button type="button" data-cmd="justifyLeft" title="Στοίχιση αριστερά" aria-label="Στοίχιση αριστερά" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 10h10M4 14h16M4 18h10"/></svg></button><button type="button" data-cmd="justifyCenter" title="Στοίχιση στο κέντρο" aria-label="Στοίχιση στο κέντρο" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"/></svg></button><button type="button" data-cmd="justifyRight" title="Στοίχιση δεξιά" aria-label="Στοίχιση δεξιά" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M10 10h10M4 14h16M10 18h10"/></svg></button><button type="button" data-cmd="justifyFull" title="Πλήρης στοίχιση" aria-label="Πλήρης στοίχιση" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg></button></span><span class="grp"><button type="button" data-cmd="link" title="Σύνδεσμος" aria-label="Σύνδεσμος"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button><button type="button" data-cmd="clear" title="Αφαίρεση μορφοποίησης" aria-label="Αφαίρεση μορφοποίησης"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h12M12 5l-3 14M15 15l5 5M20 15l-5 5"/></svg></button></span><div class="rtpop" id="pop-style" role="group" aria-label="Στυλ παραγράφου" hidden><button type="button" data-cmd="block" data-val="p" class="st st-p" aria-pressed="false">Κανονικό κείμενο</button><button type="button" data-cmd="block" data-val="h2" class="st st-h2" aria-pressed="false">Επικεφαλίδα</button><button type="button" data-cmd="block" data-val="h3" class="st st-h3" aria-pressed="false">Υπότιτλος</button><button type="button" data-cmd="block" data-val="blockquote" class="st st-blockquote" aria-pressed="false">Παράθεμα</button></div><div class="rtpop" id="pop-size" role="group" aria-label="Μέγεθος γραμμάτων" hidden><button type="button" data-cmd="size" data-val="s" class="sz sz-s">Μικρά</button><button type="button" data-cmd="size" data-val="n" class="sz sz-n">Κανονικά</button><button type="button" data-cmd="size" data-val="l" class="sz sz-l">Μεγάλα</button><button type="button" data-cmd="size" data-val="xl" class="sz sz-xl">Πολύ μεγάλα</button></div><div class="rtpop sws" id="pop-color" role="group" aria-label="Χρώμα γραμμάτων" hidden><button type="button" data-cmd="color" data-val="auto" class="sw tc-auto" title="Αυτόματο (κανονικό χρώμα)" aria-label="Αυτόματο (κανονικό χρώμα)"><i></i></button><button type="button" data-cmd="color" data-val="red" class="sw tc-red" title="Κόκκινο" aria-label="Κόκκινο"><i></i></button><button type="button" data-cmd="color" data-val="orange" class="sw tc-orange" title="Πορτοκαλί" aria-label="Πορτοκαλί"><i></i></button><button type="button" data-cmd="color" data-val="green" class="sw tc-green" title="Πράσινο" aria-label="Πράσινο"><i></i></button><button type="button" data-cmd="color" data-val="blue" class="sw tc-blue" title="Μπλε" aria-label="Μπλε"><i></i></button><button type="button" data-cmd="color" data-val="purple" class="sw tc-purple" title="Μωβ" aria-label="Μωβ"><i></i></button><button type="button" data-cmd="color" data-val="brown" class="sw tc-brown" title="Καφέ" aria-label="Καφέ"><i></i></button><button type="button" data-cmd="color" data-val="gray" class="sw tc-gray" title="Γκρι" aria-label="Γκρι"><i></i></button></div><div class="rtpop sws" id="pop-hl" role="group" aria-label="Επισήμανση" hidden><button type="button" data-cmd="hl" data-val="none" class="sw hl-none" title="Χωρίς επισήμανση" aria-label="Χωρίς επισήμανση"><i></i></button><button type="button" data-cmd="hl" data-val="yellow" class="sw hl-yellow" title="Κίτρινο" aria-label="Κίτρινο"><i></i></button><button type="button" data-cmd="hl" data-val="green" class="sw hl-green" title="Πράσινο" aria-label="Πράσινο"><i></i></button><button type="button" data-cmd="hl" data-val="blue" class="sw hl-blue" title="Γαλάζιο" aria-label="Γαλάζιο"><i></i></button><button type="button" data-cmd="hl" data-val="pink" class="sw hl-pink" title="Ροζ" aria-label="Ροζ"><i></i></button><button type="button" data-cmd="hl" data-val="orange" class="sw hl-orange" title="Πορτοκαλί" aria-label="Πορτοκαλί"><i></i></button></div></div><p class="help">Επιλέξτε λέξεις και πατήστε τα κουμπιά για μορφοποίηση: στυλ, μέγεθος, χρώμα, επισήμανση, λίστες, εσοχή και στοίχιση (π.χ. στο κέντρο). Στη λίστα ελέγχου πατήστε το κουτάκι για να το τσεκάρετε. Οι διευθύνσεις (https://…) και τα email γίνονται αυτόματα σύνδεσμοι.</p></div>
   <div class="f"><span class="l">Φωτογραφίες</span>
    <div><label class="btn sm">+ Προσθήκη φωτογραφιών<input type="file" id="fP" accept="image/*" multiple hidden></label></div>
    <p class="help">Η πρώτη (με κίτρινο πλαίσιο) είναι η κύρια φωτογραφία της ανάρτησης. Οι φωτογραφίες μικραίνουν αυτόματα για να φορτώνει γρήγορα το site.</p>
@@ -318,7 +357,7 @@ $('#tpl').addEventListener('change',function(){var f=this.files&&this.files[0];t
 /* ---------- Φόρμα ανάρτησης ---------- */
 function openEd(a){
  editing=a;draft=a?JSON.parse(JSON.stringify(a)):{id:0,date:today(),type:'Νέα',title:'',text:'',photos:[],files:[],album:''};draft.videos=(draft.videos||[]).slice();$('#fV').value='';$('#verr').textContent='';
- $('#edTitle').textContent=a?'Επεξεργασία ανάρτησης':'Νέα ανάρτηση';$('#fT').value=draft.title;$('#fD').value=draft.date;ED.innerHTML=(draft.html!=null?sanitize(draft.html):md(draft.text))||'<p><br></p>';edEmpty();saved=null;
+ $('#edTitle').textContent=a?'Επεξεργασία ανάρτησης':'Νέα ανάρτηση';$('#fT').value=draft.title;$('#fD').value=draft.date;ED.innerHTML=toEdit((draft.html!=null?sanitize(draft.html):md(draft.text))||'<p><br></p>');edEmpty();saved=null;popClose();hReset();
  document.querySelectorAll('input[name=ty]').forEach(function(r){r.checked=r.value===draft.type});
  $('#fA').innerHTML='<option value="">— Όχι, μόνο στην ανάρτηση —</option>'+Object.keys(ALB).map(function(k){return '<option value="'+k+'"'+(draft.album===k?' selected':'')+'>'+esc(ALB[k])+'</option>'}).join('');
  $('#del').hidden=!a;$('#ederr').textContent='';$('#tab-arts').hidden=true;$('#tab-albs').hidden=true;$('#donebox').hidden=true;$('#edit').hidden=false;
@@ -334,7 +373,14 @@ function leaveOk(){return !draft||!dDirty||confirm('Η ανάρτηση που �
 function closeEd(){dDirty=false;popEd();$('#edit').hidden=true;$('#tab-arts').hidden=false;document.querySelectorAll('[data-tab]').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab==='arts'?'true':'false')});editing=draft=null;renderArts();stats()}
 function sanitize(html){
  var doc=new DOMParser().parseFromString('<div>'+(html||'')+'</div>','text/html'),root=doc.body.firstChild,out=document.createElement('div');
- var MAP={B:'STRONG',STRONG:'STRONG',I:'EM',EM:'EM',U:'U',P:'P',DIV:'P',H1:'H3',H2:'H3',H3:'H3',H4:'H3',H5:'H3',H6:'H3',UL:'UL',OL:'OL',LI:'LI',A:'A',BR:'BR'},BLOCK={P:1,H3:1,UL:1,OL:1};
+ var MAP={B:'STRONG',STRONG:'STRONG',I:'EM',EM:'EM',U:'U',S:'S',STRIKE:'S',DEL:'S',P:'P',DIV:'P',H1:'H2',H2:'H2',H3:'H3',H4:'H3',H5:'H3',H6:'H3',BLOCKQUOTE:'BLOCKQUOTE',UL:'UL',OL:'OL',LI:'LI',A:'A',BR:'BR'},BLOCK={P:1,H2:1,H3:1,BLOCKQUOTE:1,UL:1,OL:1};
+ /* Επιτρεπόμενα χρώματα, επισημάνσεις και μεγέθη: γίνονται κλάσεις (tc-*, hl-*, fs-*) — κανένα ελεύθερο style */
+ var TC={red:'c62828',orange:'c2410c',green:'2e7d32',blue:'1565c0',purple:'6a1b9a',brown:'6d4c41',gray:'5f6b70'},HL={yellow:'fff2a8',green:'d4f5d0',blue:'d3ecfa',pink:'fadce6',orange:'ffe2c2'},FS={'x-small':'s',small:'s',large:'l','x-large':'xl','xx-large':'xl','xxx-large':'xl','1':'s','2':'s','4':'l','5':'xl','6':'xl','7':'xl'},AL={center:'c',right:'r',justify:'j'};
+ function hex(c){c=String(c||'').trim().toLowerCase();var m=c.match(/^#([0-9a-f]{6})$/);if(m)return m[1];m=c.match(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/);if(m)return m[1]+m[1]+m[2]+m[2]+m[3]+m[3];m=c.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)/);if(m&&(m[4]==null||+m[4]>0))return [m[1],m[2],m[3]].map(function(x){return ('0'+(+x).toString(16)).slice(-2)}).join('');return ''}
+ function sty(st,p){var m=st.match(new RegExp('(?:^|;)\\s*'+p+'\\s*:\\s*([^;]+)','i'));return m?m[1].trim().toLowerCase():''}
+ function key(o,v){for(var k in o)if(o[k]===v)return k;return ''}
+ function has(c,re){var m=c.match(re);return m?m[1]:''}
+
  function walk(src,dst){[].slice.call(src.childNodes).forEach(function(n){
   if(n.nodeType===3){dst.appendChild(document.createTextNode(n.nodeValue));return}
   if(n.nodeType!==1||/^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|IMG|SVG|VIDEO|AUDIO|FORM|INPUT|BUTTON|TEXTAREA|SELECT)$/.test(n.tagName))return;
@@ -343,21 +389,30 @@ function sanitize(html){
    if(/font-weight:\s*(bold|[6-9]00)/i.test(st)){var e1=document.createElement('strong');w.appendChild(e1);w=e1}
    if(/font-style:\s*italic/i.test(st)){var e2=document.createElement('em');w.appendChild(e2);w=e2}
    if(/text-decoration[^;]*underline/i.test(st)){var e3=document.createElement('u');w.appendChild(e3);w=e3}
+   if(/text-decoration[^;]*line-through/i.test(st)){var e4=document.createElement('s');w.appendChild(e4);w=e4}
+   var c=' '+(n.getAttribute('class')||'').replace(/\s+/g,' ')+' ',k=[],v,F=n.tagName==='FONT';
+   v=key(TC,hex(sty(st,'color')||(F?n.getAttribute('color'):'')))||has(c,/ tc-([a-z]+) /);if(v&&TC[v])k.push('tc-'+v);
+   v=key(HL,hex(sty(st,'background-color')||sty(st,'background')))||has(c,/ hl-([a-z]+) /)||(n.tagName==='MARK'?'yellow':'');if(v&&HL[v])k.push('hl-'+v);
+   v=FS[sty(st,'font-size')||(F?String(n.getAttribute('size')||''):'')]||has(c,/ fs-(s|l|xl) /);if(v)k.push('fs-'+v);
+   if(k.length){var e5=document.createElement('span');e5.className=k.join(' ');w.appendChild(e5);w=e5}
    walk(n,w);return}
-  var e=document.createElement(tg);
+  var e=document.createElement(tg),c=' '+(n.getAttribute('class')||'').replace(/\s+/g,' ')+' ',st=n.getAttribute('style')||'',k=[];
+  if(/^(P|H2|H3|BLOCKQUOTE|LI)$/.test(tg)){var al=sty(st,'text-align')||String(n.getAttribute('align')||'').toLowerCase(),a2=al?AL[al]:has(c,/ al-(c|r|j) /);if(a2)k.push('al-'+a2);var ii=has(c,/ in([1-3]) /);if(ii)k.push('in'+ii)}
+  if(tg==='UL'&&/ todo /.test(c))k.push('todo');if(tg==='LI'&&/ todo-done /.test(c))k.push('todo-done');
+  if(k.length)e.className=k.join(' ');
   if(tg==='A'){var h=(n.getAttribute('href')||'').trim();if(!/^(https?:|mailto:|tel:)/i.test(h)){walk(n,dst);return}e.setAttribute('href',h);if(/^https?:/i.test(h)){e.setAttribute('target','_blank');e.setAttribute('rel','noopener')}}
   walk(n,e);dst.appendChild(e)})}
  walk(root,out);
  var fin=document.createElement('div'),cur=null;
  [].slice.call(out.childNodes).forEach(function(n){if(n.nodeType===1&&BLOCK[n.tagName]){cur=null;fin.appendChild(n)}else{if(!cur){if(n.nodeType===3&&!n.nodeValue.trim())return;if(n.nodeName==='BR')return;cur=document.createElement('p');fin.appendChild(cur)}cur.appendChild(n)}});
- [].slice.call(fin.querySelectorAll('p p,p h3,p ul,p ol,li p,li h3,h3 p,h3 h3')).forEach(function(x){var p=x.parentNode;if(!p)return;while(x.firstChild)p.insertBefore(x.firstChild,x);p.removeChild(x)});
+ [].slice.call(fin.querySelectorAll('p p,p h2,p h3,p blockquote,p ul,p ol,li p,li h2,li h3,li blockquote,h2 p,h2 h2,h2 h3,h2 blockquote,h3 p,h3 h2,h3 h3,h3 blockquote,blockquote p,blockquote h2,blockquote h3,blockquote blockquote,h2 ul,h2 ol,h3 ul,h3 ol,blockquote ul,blockquote ol')).forEach(function(x){var p=x.parentNode;if(!p)return;while(x.firstChild)p.insertBefore(x.firstChild,x);p.removeChild(x)});
  [].slice.call(fin.querySelectorAll('li')).forEach(function(li){var pr=li.parentNode;if(pr&&pr.tagName!=='UL'&&pr.tagName!=='OL'){var ul=document.createElement('ul');pr.insertBefore(ul,li);ul.appendChild(li)}});
- [].slice.call(fin.querySelectorAll('p,h3,li,ul,ol,strong,em,u')).reverse().forEach(function(x){if(!x.textContent.replace(/[\s ]/g,''))x.parentNode.removeChild(x)});
+ [].slice.call(fin.querySelectorAll('p,h2,h3,blockquote,li,ul,ol,strong,em,u,s,span')).reverse().forEach(function(x){if(!x.textContent.replace(/[\s ]/g,''))x.parentNode.removeChild(x)});
  var tw=document.createTreeWalker(fin,NodeFilter.SHOW_TEXT),L=[],t;while((t=tw.nextNode()))if(!(t.parentNode.closest&&t.parentNode.closest('a')))L.push(t);
  L.forEach(function(t){var s=t.nodeValue,re=/(https?:\/\/[^\s<]+[^\s<.,;:!?)»"])|([\w.+-]+@[\w-]+\.[\w.-]+\w)/g,m,last=0,hit=0,f=document.createDocumentFragment();
   while((m=re.exec(s))){hit=1;f.appendChild(document.createTextNode(s.slice(last,m.index)));var a=document.createElement('a');a.textContent=m[0];if(m[1]){a.setAttribute('href',m[0]);a.setAttribute('target','_blank');a.setAttribute('rel','noopener')}else a.setAttribute('href','mailto:'+m[0]);f.appendChild(a);last=re.lastIndex}
   if(hit){f.appendChild(document.createTextNode(s.slice(last)));t.parentNode.replaceChild(f,t)}});
- return fin.innerHTML.replace(/ /g,' ').replace(/(<br>\s*)+(<\/(p|li|h3)>)/g,'$2');
+ return fin.innerHTML.replace(/ /g,' ').replace(/(<br>\s*)+(<\/(p|li|h2|h3|blockquote)>)/g,'$2');
 }
 
 var ED=$('#fX'),BAR=$('#rtbar'),saved=null;
@@ -366,20 +421,85 @@ function edEmpty(){ED.classList.toggle('empty',!ED.textContent.replace(/[\s ]/g
 function inEd(r){return r&&ED.contains(r.commonAncestorContainer)}
 document.addEventListener('selectionchange',function(){var s=getSelection();if(s.rangeCount&&inEd(s.getRangeAt(0))){saved=s.getRangeAt(0).cloneRange();sync()}});
 function restore(){ED.focus();if(saved){var s=getSelection();s.removeAllRanges();s.addRange(saved)}}
-function sync(){['bold','italic','underline','insertUnorderedList','insertOrderedList'].forEach(function(c){var b=BAR.querySelector('[data-cmd="'+c+'"]');var on=false;try{on=document.queryCommandState(c)}catch(e){}b.setAttribute('aria-pressed',on?'true':'false')});
- var h=false;try{h=/h3/i.test(document.queryCommandValue('formatBlock'))}catch(e){}BAR.querySelector('[data-cmd="h3"]').setAttribute('aria-pressed',h?'true':'false')}
+/* ---------- Μορφοποίηση κειμένου (όπως στο Samsung Notes) ---------- */
+var PAL={tc:{red:'c62828',orange:'c2410c',green:'2e7d32',blue:'1565c0',purple:'6a1b9a',brown:'6d4c41',gray:'5f6b70'},hl:{yellow:'fff2a8',green:'d4f5d0',blue:'d3ecfa',pink:'fadce6',orange:'ffe2c2'}};
+var BLK='p,h2,h3,blockquote,li';
+/* Από το αποθηκευμένο κείμενο (κλάσεις) σε μορφή που καταλαβαίνει ο επεξεργαστής του browser (inline στυλ) */
+function toEdit(h){var d=document.createElement('div');d.innerHTML=h||'';
+ [].slice.call(d.querySelectorAll('[class]')).forEach(function(x){var c=' '+x.className+' ',m;
+  if(x.tagName==='SPAN'){if((m=c.match(/ tc-([a-z]+) /))&&PAL.tc[m[1]])x.style.color='#'+PAL.tc[m[1]];if((m=c.match(/ hl-([a-z]+) /))&&PAL.hl[m[1]])x.style.backgroundColor='#'+PAL.hl[m[1]];if((m=c.match(/ fs-(s|l|xl) /)))x.style.fontSize={s:'small',l:'large',xl:'x-large'}[m[1]];x.removeAttribute('class')}
+  else if((m=c.match(/ al-(c|r|j) /))){x.style.textAlign={c:'center',r:'right',j:'justify'}[m[1]];x.classList.remove('al-'+m[1]);if(!x.className)x.removeAttribute('class')}});
+ return d.innerHTML}
+function rng(){var s=getSelection();return s.rangeCount&&inEd(s.getRangeAt(0))?s.getRangeAt(0):null}
+function here(sel){var r=rng();if(!r)return null;var n=r.startContainer;n=n.nodeType===3?n.parentNode:n;var x=n.closest?n.closest(sel):null;return x&&ED.contains(x)?x:null}
+function blocks(){var r=rng();if(!r)return [];var L=[].slice.call(ED.querySelectorAll(BLK)).filter(function(b){return r.intersectsNode(b)&&!b.querySelector(BLK)});
+ if(!L.length){var b=here(BLK);if(b)L=[b]}return L}
+function chkList(){var l=here('ul,ol');return l&&l.tagName==='UL'&&l.classList.contains('todo')?l:null}
+/* Αναίρεση / Επανάληψη: δικό μας ιστορικό, ώστε να πιάνει και τις στοιχίσεις, εσοχές και λίστες ελέγχου */
+var HIST=[],HI=0,htimer=0;
+function len(n){return n.nodeType===3?n.nodeValue.length:n.childNodes.length}
+function selPath(n,o){var p=[];while(n&&n!==ED){var par=n.parentNode;if(!par)return null;p.unshift([].indexOf.call(par.childNodes,n));n=par}return n===ED?{p:p,o:o}:null}
+function selGet(){var r=rng();return r?{a:selPath(r.startContainer,r.startOffset),b:selPath(r.endContainer,r.endOffset)}:null}
+function nodeAt(pt){if(!pt)return null;var n=ED;for(var i=0;i<pt.p.length;i++){n=n.childNodes[pt.p[i]];if(!n)return null}return n}
+function selSet(S){ED.focus();var r=document.createRange();try{var a=nodeAt(S&&S.a),b=nodeAt(S&&S.b);if(!a||!b)throw 0;r.setStart(a,Math.min(S.a.o,len(a)));r.setEnd(b,Math.min(S.b.o,len(b)))}catch(e){r.selectNodeContents(ED);r.collapse(false)}var s=getSelection();s.removeAllRanges();s.addRange(r);saved=r.cloneRange()}
+function hBtns(){BAR.querySelector('[data-cmd="undo"]').disabled=HI<=0&&!htimer;BAR.querySelector('[data-cmd="redo"]').disabled=HI>=HIST.length-1}
+function hReset(){clearTimeout(htimer);htimer=0;HIST=[{h:ED.innerHTML,s:null}];HI=0;hBtns()}
+function hCommit(){clearTimeout(htimer);htimer=0;var h=ED.innerHTML;if(HIST[HI]&&HIST[HI].h===h){HIST[HI].s=selGet();hBtns();return}HIST=HIST.slice(0,HI+1);HIST.push({h:h,s:selGet()});if(HIST.length>200)HIST.shift();HI=HIST.length-1;hBtns()}
+function hLater(){clearTimeout(htimer);htimer=setTimeout(hCommit,700);hBtns()}
+function hGo(d){if(htimer)hCommit();var j=HI+d;if(j<0||j>=HIST.length)return;HI=j;ED.innerHTML=HIST[j].h;selSet(HIST[j].s);edEmpty();dDirty=true;sync();hBtns()}
+function css(c,v){try{document.execCommand('styleWithCSS',false,true);document.execCommand(c,false,v)}finally{try{document.execCommand('styleWithCSS',false,false)}catch(e){}}}
+function popClose(){[].slice.call(BAR.querySelectorAll('.rtpop')).forEach(function(p){p.hidden=true});[].slice.call(BAR.querySelectorAll('[data-pop]')).forEach(function(b){b.setAttribute('aria-expanded','false')})}
+function q(c){try{return document.queryCommandState(c)}catch(e){return false}}
+function qv(c){try{return String(document.queryCommandValue(c)||'')}catch(e){return ''}}
+function press(c,on){var b=BAR.querySelector('[data-cmd="'+c+'"]');if(b)b.setAttribute('aria-pressed',on?'true':'false')}
+function sync(){['bold','italic','underline','strikeThrough','insertOrderedList'].forEach(function(c){press(c,q(c))});
+ var ck=!!chkList();press('insertUnorderedList',q('insertUnorderedList')&&!ck);press('chk',ck);
+ var al=q('justifyCenter')?'justifyCenter':q('justifyRight')?'justifyRight':q('justifyFull')?'justifyFull':'justifyLeft';['justifyLeft','justifyCenter','justifyRight','justifyFull'].forEach(function(c){press(c,c===al)});
+ var fb=qv('formatBlock').toLowerCase(),nm={h2:'Επικεφαλίδα',h3:'Υπότιτλος',blockquote:'Παράθεμα'};$('#rtStyle').textContent=nm[fb]||'Κείμενο';
+ [].slice.call(BAR.querySelectorAll('[data-cmd="block"]')).forEach(function(b){b.setAttribute('aria-pressed',b.dataset.val===(nm[fb]?fb:'p')?'true':'false')});
+ $('#rtTc').style.background=qv('foreColor')||'';var hb=qv('hiliteColor');$('#rtHl').style.background=/^rgba\(0, 0, 0, 0\)$|transparent/.test(hb)?'':hb}
+/* Ο Chrome μερικές φορές βάζει τη λίστα μέσα σε παράγραφο (<p><ul>…): τη βγάζουμε έξω, κρατώντας τον κέρσορα στη θέση του */
+function fixNest(){var R=rng(),sc=R&&R.startContainer,so=R&&R.startOffset,ec=R&&R.endContainer,eo=R&&R.endOffset;
+ [].slice.call(ED.querySelectorAll('p>ul,p>ol,h2>ul,h2>ol,h3>ul,h3>ol,blockquote>ul,blockquote>ol')).forEach(function(l){var p=l.parentNode,af=document.createElement(p.tagName);
+  while(l.nextSibling)af.appendChild(l.nextSibling);p.parentNode.insertBefore(l,p.nextSibling);if(af.textContent.replace(/[\s\u00a0]/g,''))l.parentNode.insertBefore(af,l.nextSibling);
+  if(!p.textContent.replace(/[\s\u00a0]/g,''))p.parentNode.removeChild(p)});
+ if(sc&&ED.contains(sc)&&ED.contains(ec)){try{var r=document.createRange();r.setStart(sc,so);r.setEnd(ec,eo);var g=getSelection();g.removeAllRanges();g.addRange(r);saved=r.cloneRange()}catch(e){}}}
 BAR.addEventListener('mousedown',function(e){if(e.target.closest('button'))e.preventDefault()});
-BAR.addEventListener('click',function(e){var b=e.target.closest('button[data-cmd]');if(!b)return;restore();var c=b.dataset.cmd;
- if(c==='h3'){var cur='';try{cur=document.queryCommandValue('formatBlock')}catch(x){}document.execCommand('formatBlock',false,/h3/i.test(cur)?'p':'h3')}
+BAR.addEventListener('click',function(e){
+ var pb=e.target.closest('button[data-pop]');if(pb){var pp=$('#pop-'+pb.dataset.pop),op=pp.hidden;popClose();if(op){pp.hidden=false;pb.setAttribute('aria-expanded','true')}return}
+ var b=e.target.closest('button[data-cmd]');if(!b||b.disabled)return;var c=b.dataset.cmd,v=b.dataset.val;
+ if(c==='undo'||c==='redo'){hGo(c==='undo'?-1:1);return}
+ if(htimer)hCommit();restore();popClose();
+ if(c==='block'){var cur=qv('formatBlock').toLowerCase(),ob=here(BLK),oc=ob?getComputedStyle(ob):null,old=oc?{c:oc.color,f:oc.fontSize,w:oc.fontWeight,i:oc.fontStyle}:null,to=cur===v&&v!=='p'?'p':v;
+  if(here('li')){if(v!=='p'){document.execCommand(here('ol')?'insertOrderedList':'insertUnorderedList');document.execCommand('formatBlock',false,v)}}else if(to!==cur)document.execCommand('formatBlock',false,to);
+  /* ο Chrome «κρατά» το παλιό μέγεθος/χρώμα με κρυφά span· τα καθαρίζουμε ώστε ο υπότιτλος να μοιάζει με υπότιτλο */
+  if(old)blocks().forEach(function(x){[].slice.call(x.querySelectorAll('span[style],font')).forEach(function(sp){var y=sp.style;if(y.fontSize&&(/px$/.test(y.fontSize)||y.fontSize===old.f))y.fontSize='';if(y.color&&y.color===old.c)y.color='';if(y.fontWeight&&String(y.fontWeight)===String(old.w))y.fontWeight='';if(y.fontStyle&&y.fontStyle===old.i)y.fontStyle='';if(!sp.getAttribute('style'))sp.removeAttribute('style')})})}
+ else if(c==='size')css('fontSize',{s:'2',n:'3',l:'4',xl:'5'}[v]);
+ else if(c==='color'){var bl=here(BLK);css('foreColor',v==='auto'?(bl?getComputedStyle(bl).color:'#16323a'):'#'+PAL.tc[v])}
+ else if(c==='hl')css('hiliteColor',v==='none'?'transparent':'#'+PAL.hl[v]);
+ else if(c==='chk'){var l=here('ul,ol');if(chkList())document.execCommand('insertUnorderedList');else if(l&&l.tagName==='UL')l.classList.add('todo');else{document.execCommand('insertUnorderedList');var m=here('ul');if(m)m.classList.add('todo')}}
+ else if(c==='insertUnorderedList'&&chkList())chkList().classList.remove('todo');
+ else if(c==='insertOrderedList'&&chkList()){document.execCommand('insertOrderedList');var o=here('ol');if(o)o.classList.remove('todo')}
+ else if(c==='indent'||c==='outdent'){var L=blocks();if(!L.length){document.execCommand('formatBlock',false,'p');L=blocks()}L.forEach(function(x){var n=+((x.className.match(/\bin([1-3])\b/)||[])[1]||0);x.classList.remove('in'+n);n=Math.max(0,Math.min(3,n+(c==='indent'?1:-1)));if(n)x.classList.add('in'+n);if(!x.className)x.removeAttribute('class')})}
  else if(c==='link'){var sel=getSelection(),u=prompt('Διεύθυνση συνδέσμου (π.χ. www.imargolidos.gr):','');restore();if(!u||!u.trim())return;u=u.trim();if(!/^(https?:|mailto:|tel:)/i.test(u))u=(/@/.test(u)&&!/\//.test(u)?'mailto:':'https://')+u;
   if(!sel.rangeCount||sel.isCollapsed)document.execCommand('insertHTML',false,'<a href="'+esc(u)+'">'+esc(u.replace(/^mailto:/,''))+'</a>&nbsp;');else document.execCommand('createLink',false,u)}
- else if(c==='clear'){document.execCommand('removeFormat');document.execCommand('unlink');try{if(/h3/i.test(document.queryCommandValue('formatBlock')))document.execCommand('formatBlock',false,'p')}catch(x){}}
+ else if(c==='clear'){document.execCommand('removeFormat');document.execCommand('unlink');if(/^(h2|h3|blockquote)$/i.test(qv('formatBlock')))document.execCommand('formatBlock',false,'p');
+  blocks().forEach(function(x){x.classList.remove('in1','in2','in3');x.style.textAlign='';if(!x.getAttribute('style'))x.removeAttribute('style');if(!x.className)x.removeAttribute('class')})}
  else document.execCommand(c);
- edEmpty();sync()});
-ED.addEventListener('input',function(){edEmpty();dDirty=true});
+ fixNest();dDirty=true;edEmpty();sync();hCommit()});
+/* Λίστα ελέγχου: πάτημα στο κουτάκι = τσεκ / ξε-τσεκ */
+ED.addEventListener('click',function(e){var li=e.target.closest&&e.target.closest('ul.todo>li');if(!li||!ED.contains(li))return;var r=li.getBoundingClientRect(),fs=parseFloat(getComputedStyle(li).fontSize)||16;
+ if(e.clientX-r.left<=fs*1.75&&e.clientY-r.top<=fs*1.9){if(htimer)hCommit();li.classList.toggle('todo-done');if(!li.className)li.removeAttribute('class');dDirty=true;hCommit()}});
+ED.addEventListener('beforeinput',function(e){if(e.inputType==='historyUndo'||e.inputType==='historyRedo'){e.preventDefault();hGo(e.inputType==='historyUndo'?-1:1)}});
+ED.addEventListener('input',function(e){edEmpty();dDirty=true;
+ if(e.inputType==='insertParagraph'){var li=here('ul.todo>li');if(li&&li.classList.contains('todo-done')&&!li.textContent.replace(/[\s ]/g,'')){li.classList.remove('todo-done');if(!li.className)li.removeAttribute('class')}}
+ if(/^format/.test(e.inputType||''))hCommit();else hLater()});
 ED.addEventListener('paste',function(e){e.preventDefault();var t=(e.clipboardData||window.clipboardData).getData('text/plain')||'';document.execCommand('insertText',false,t.replace(/\r/g,''))});
 ED.addEventListener('drop',function(e){e.preventDefault()});
-ED.addEventListener('keydown',function(e){if(e.key==='Tab'){e.preventDefault()}});
+ED.addEventListener('keydown',function(e){if(e.key==='Tab'){e.preventDefault();return}
+ if((e.ctrlKey||e.metaKey)&&!e.altKey){var k=(e.key||'').toLowerCase();if(k==='z'){e.preventDefault();hGo(e.shiftKey?1:-1);return}if(k==='y'){e.preventDefault();hGo(1);return}}
+ if(e.key==='Enter'&&!e.shiftKey){var bq=here('blockquote');if(bq&&!bq.textContent.replace(/[\s ]/g,'')){e.preventDefault();if(htimer)hCommit();document.execCommand('formatBlock',false,'p');hCommit();sync()}}});
+document.addEventListener('click',function(e){if(!BAR.contains(e.target))popClose()});
 function drawPhotos(busy){
  $('#pgrid').innerHTML=draft.photos.map(function(p,i){return '<div class="ph'+(i?'':' main')+'"><img src="'+src(p,1)+'" alt="">'+(i?'':'<span class="badge">Κύρια</span>')+'<div class="pa">'+(i?'<button type="button" title="Να γίνει κύρια" aria-label="Να γίνει κύρια φωτογραφία" data-main="'+i+'">★</button>':'')+'<button type="button" title="Αφαίρεση" aria-label="Αφαίρεση φωτογραφίας" data-rm="'+i+'">✕</button></div></div>'}).join('')+(busy?'<div class="ph busy">Επεξεργασία…</div>':'');
 }
