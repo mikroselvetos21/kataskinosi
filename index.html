@@ -913,6 +913,19 @@ details.q .a p,details.q .a li{max-width:80ch}
  .sidecar::after{content:"";flex:0 0 6px}
  .sidecar:focus-visible{outline:3px solid var(--sun);outline-offset:4px;border-radius:20px}
 }
+
+/* Αρχική: «Τα Νέα μας» — 3 κάρτες στον υπολογιστή, καρουζέλ που σύρεται στο κινητό */
+.hnews{gap:clamp(28px,2.8vw,40px)}
+.hnews[data-n="1"]{grid-template-columns:minmax(0,380px);justify-content:center}
+.hnews[data-n="2"]{grid-template-columns:repeat(2,minmax(0,380px));justify-content:center}
+.view .wrap>p.hnall{display:flex;justify-content:center;max-width:none;margin:36px 0 0}
+@media (max-width:900px){
+ .hnews,.hnews[data-n]{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:20px;margin:-6px -20px -14px;padding:6px 20px 22px;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+ .hnews::-webkit-scrollbar{display:none}
+ .hnews>.artcard{flex:0 0 min(82%,340px);scroll-snap-align:start}
+ .hnews::after{content:"";flex:0 0 6px}
+ .view .wrap>p.hnall{margin-top:24px}
+}
 </style>
 </head>
 <body>
@@ -949,6 +962,7 @@ details.q .a p,details.q .a li{max-width:80ch}
 <article class="msg"><p>Παράλληλα καθώς λαμβάνεις κάποιες ευθύνες απέναντι στον εαυτό σου, όπως είναι το προσωπικό σου νοικοκυριό, αλλά και απέναντι στους άλλους, όπως είναι η κοινή ώρα του φαγητού, η ξεκούραση, το ομαδικό παιχνίδι, αποκτάς πολύτιμες εμπειρίες για την μετέπειτα ζωή σου. Ακόμη συμμετέχοντας στη λειτουργική ζωή της εκκλησίας μας, γεύεσαι την ουσία της Πίστης μας. Δοκιμάζεις την εμπειρία της ενότητας και της αδελφοσύνης. Με δύο λόγια η κατασκήνωση είναι ο χώρος, όπου κάθε παιδί παίζοντας μαθαίνει την ζωή.</p><p>Ο Μητροπολίτης, οι αρχηγοί, και τα στελέχη της κατασκήνωσης σε περιμένουμε και σου ευχόμαστε, Καλή Κατασκήνωση!!!</p><p class="sign">Με θερμές ευχές,<br><b>Ο Αργολίδος Νεκτάριος</b></p></article>
 </div></section>
 <section class="namesec" id="a-thavor"><div class="name3"><div class="nametxt"><h2>Γιατί «Κατασκηνώσεις ΘΑΒΩΡ»;</h2><p>Η ονομασία «Θαβώρ» αντλεί την έμπνευσή της από το ευλογημένο Όρος της Μεταμορφώσεως του Σωτήρος, συμβολίζοντας το πνευματικό φως, την εσωτερική αλλαγή και την ανάταση της ψυχής.</p><p>Στην κατασκήνωση της Ιεράς Μητροπόλεως Αργολίδος, στο Όρος Φαρμακά, το «Θαβώρ» γίνεται ένας ζωντανός χώρος συνάντησης της νεολαίας με την πίστη, τη φύση και την αυθεντική συντροφικότητα.</p><p>Όπως στο ιστορικό βουνό οι Μαθητές βίωσαν την αποκάλυψη της Αλήθειας, έτσι και οι μικροί μας κατασκηνωτές καλούνται να ανακαλύψουν τα ταλέντα τους, να θωρακίσουν το ήθος τους και να μεταμορφώσουν την καθημερινότητά τους μέσα από τη χαρά, το παιχνίδι και την ομαδική ζωή.</p></div><div class="sidecar" role="group" aria-label="Φωτογραφίες της Κατασκήνωσης" tabindex="0"><div class="side s1" role="img" aria-label="Τα γήπεδα της Κατασκήνωσης"></div><div class="side s2" role="img" aria-label="Ηλιοβασίλεμα στο Όρος Φαρμακάς"></div><div class="side s3" role="img" aria-label="Η Κατασκήνωση από ψηλά"></div><div class="side s4" role="img" aria-label="Παιχνίδι στα γήπεδα"></div></div></div></section>
+<section id="a-nea" class="hnsec"><div class="wrap"><h2>Τα Νέα μας</h2><p class="slead">Ανακοινώσεις, ειδήσεις και άρθρα της Κατασκήνωσης</p><div class="artgrid hnews"></div><p class="hnall"><a class="rbtn ghostd" href="#nea" data-go>Όλα τα νέα →</a></p></div></section>
 </div>
 <div class="view" id="v-epikoinonia"><div class="hero2"><div class="hbg" aria-hidden="true"></div><div class="hin"><h1>Επικοινωνία</h1><p class="hsub">Είμαστε εδώ για κάθε απορία σας</p></div></div><div class="page-h"><div class="wrap"><h1>Επικοινωνία</h1></div></div><section><div class="wrap"><div class="contact">
 <div class="cmap"><h3>Η τοποθεσία στον χάρτη</h3><p class="csub">Όρος Φαρμακάς · πρόσβαση μέσω Γυμνού Αργολίδος</p><div class="mapbox" data-map="https://www.google.com/maps?q=37.772687,22.522268&amp;z=15&amp;output=embed"><div class="mapgate"><span class="mg-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg></span><b>Όρος Φαρμακάς · 1.050 μ.</b><button type="button" class="btn mg-btn">Εμφάνιση χάρτη</button><small>Ο χάρτης φορτώνεται από τους Χάρτες Google μόνο αν πατήσετε το κουμπί.</small></div></div><p class="mapbtn" style="text-align:center;margin:18px 0 0;max-width:none"><a class="btn" href="https://maps.app.goo.gl/PXmfQs3LCPNyDZnA8" target="_blank" rel="noopener">Άνοιγμα στους Χάρτες Google</a></p></div>
@@ -1317,6 +1331,11 @@ function news(){
  if(!more){more=document.createElement('div');more.className='nmore';more.innerHTML='<button type="button" class="rbtn ghostd">Περισσότερα</button>';grid.parentNode.appendChild(more);more.addEventListener('click',function(){shown+=PAGE;news()})}
  more.hidden=list.length<=shown;
 }
+/* Αρχική: «Τα Νέα μας» με τις 3 πιο πρόσφατες αναρτήσεις. Χωρίς αναρτήσεις η ενότητα αφαιρείται (στην προεπισκόπηση δείχνει τις ενδεικτικές κάρτες). */
+(function(){var hs=document.getElementById('a-nea'),hg=hs&&hs.querySelector('.hnews');if(!hg)return;
+ var L=A.length?A.slice(0,3).map(card):(window.claude?[].slice.call(grid.querySelectorAll('.artcard')).slice(0,3).map(function(c){return c.outerHTML}):[]);
+ if(!L.length){hs.parentNode.removeChild(hs);return}
+ hg.innerHTML=L.join('');hg.setAttribute('data-n',String(L.length))})();
 function article(id){
  var a=A.find(function(x){return String(x.id)===String(id)});
  if(!a){document.title=T0;post.innerHTML='<div class="nstate"><b>Το άρθρο δεν βρέθηκε.</b>Ίσως έχει αφαιρεθεί. <a href="#nea" data-go>Όλα τα νέα</a></div>';return}
