@@ -963,6 +963,14 @@ details.q .a p,details.q .a li{max-width:80ch}
 @media (max-width:370px){.mlogo img{width:62px}}
 @media (max-width:1140px) and (max-height:720px){.top nav#mnav .mhead{margin-bottom:8px;padding-bottom:10px}.top nav#mnav>a:not(.reglink){min-height:50px}.top nav#mnav a.reglink{min-height:52px;margin:16px 0 20px}.top nav#mnav .mfoot{padding-top:16px}.mfoot .mseal img{height:48px}}
 @media (prefers-reduced-motion:reduce){html.mopen .top nav#mnav>a,html.mopen .top nav#mnav>.mfoot{animation:none}}
+
+/* Καρφιτσωμένη ανάρτηση: κίτρινη σήμανση πάνω δεξιά στη φωτογραφία */
+.artimg .artpin{position:absolute;right:12px;top:12px;z-index:1;display:inline-flex;align-items:center;gap:5px;padding:5px 11px 5px 9px;border-radius:999px;background:var(--sun);color:var(--ink);font-size:.78rem;font-weight:800;line-height:1.2;box-shadow:0 4px 14px rgba(22,50,58,.18)}
+.artimg .artpin svg{width:14px;height:14px;flex:none}
+.artcard.pinned{border-color:rgba(255,197,49,.85)}
+/* Σε στενές κάρτες (κινητό) μένει μόνο η πινέζα, για να μη σκεπάζει το «Ανακοίνωση» */
+.artcard.pinned .artimg{container-type:inline-size}
+@container (max-width:300px){.artimg .artpin{width:32px;height:32px;padding:0;justify-content:center}.artimg .artpin svg{width:16px;height:16px}.artimg .artpin .apt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 </style>
 </head>
 <body>
@@ -1296,11 +1304,13 @@ window.addEventListener('resize',function(){if(innerWidth>1140)close(false)});})
    Οι φωτογραφίες είναι στον φάκελο photos/ (μεγάλη: ΟΝΟΜΑ.webp, μικρογραφία: ΟΝΟΜΑ_t.webp) και τα συνημμένα στον φάκελο files/. ===== */
 (function(){
 var C={};try{C=JSON.parse(document.getElementById('site-content').textContent||'{}')}catch(e){}
-var A=(C.articles||[]).slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(b.id-a.id)}),AL=C.albums||{};
+/* Πρώτα οι καρφιτσωμένες αναρτήσεις (pin), μετά όλες με σειρά ημερομηνίας */
+var A=(C.articles||[]).slice().sort(function(a,b){return (b.pin?1:0)-(a.pin?1:0)||(a.date<b.date?1:a.date>b.date?-1:(b.id-a.id))}),AL=C.albums||{};
 var grid=document.querySelector('#v-nea .artgrid'),post=document.querySelector('#v-arthro .post');if(!grid||!post)return;
 var CAL=(grid.querySelector('.artdate svg')||{}).outerHTML||'',PIC=(grid.querySelector('.artimg svg')||{}).outerHTML||'',DL=(document.querySelector('.docbtn svg')||{}).outerHTML||'';
 /* Βίντεο YouTube: κρατάμε μόνο σωστούς κωδικούς βίντεο (11 χαρακτήρες) */
 var PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>';
+var PIN='<span class="artpin" title="Καρφιτσωμένο"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 2.5l6 6-2.3.8-3.6 3.6.5 4.6-1.9 1.9-4.2-4.2-5.5 5.5-1.1-1.1 5.5-5.5-4.2-4.2 1.9-1.9 4.6.5 3.6-3.6z" fill="currentColor"/></svg><span class="apt">Καρφιτσωμένο</span></span>';
 function vids(a){return (a.videos||[]).map(function(v){if(typeof v==='string')return /^[A-Za-z0-9_-]{11}$/.test(v)?{yt:v}:null;
  if(v&&typeof v.m==='string'&&/^https?:\/\//i.test(v.m)){try{var y=new URL(v.m);if(/^https?:$/.test(y.protocol)&&/\.(mp4|m4v|webm)$/i.test(y.pathname))return {m:y.href}}catch(e){}}
  if(v&&typeof v.u==='string'&&/^https?:\/\//i.test(v.u)){try{var x=new URL(v.u);if(x.protocol==='https:'||x.protocol==='http:')return {u:x.href,s:x.hostname.replace(/^www\./,'')}}catch(e){}}return null}).filter(Boolean)}
@@ -1359,7 +1369,7 @@ function exh(h){var d=new DOMParser().parseFromString(h||'','text/html'),P=[].sl
 function ex(t){var bl=String(t||'').replace(/\r/g,'').split(/\n\s*\n/),pp=bl.filter(function(b){b=b.trim();return b&&!/^##\s/.test(b)&&!b.split('\n').every(function(l){return /^\s*[-•]\s+/.test(l)})});var x=(pp.length?pp:bl).join(' ').replace(/\*\*/g,'').replace(/^##\s+/gm,'').replace(/^\s*[-•]\s+/gm,'').replace(/\s+/g,' ').trim();if(x.length>170){x=x.slice(0,170);x=x.slice(0,x.lastIndexOf(' ')>100?x.lastIndexOf(' '):170).replace(/[,.;:·\s]+$/,'')+'…'}return x}
 function tcls(t){return t==='Ανακοίνωση'?' t-an':t==='Άρθρο'?' t-ar':''}
 function th(p){return '<button type="button" class="th"><img src="'+ph(p,1)+'" data-full="'+ph(p)+'" alt="'+esc(p.alt||'')+'" loading="lazy" decoding="async"></button>'}
-function card(a){var p=(a.photos||[])[0],X=a.html!=null?exh(a.html):a.text;return '<article class="artcard live" data-type="'+esc(a.type)+'"><div class="artimg">'+(p?'<img src="'+ph(p,1)+'" alt="" loading="lazy" decoding="async">':PIC)+'<span class="arttag">'+esc(a.type)+'</span>'+(vids(a).length?'<span class="vbadge" role="img" aria-label="Με βίντεο" title="Με βίντεο">'+PLAY+'</span>':'')+'</div><div class="artbody"><p class="artdate">'+CAL+esc(fmt(a.date))+'</p><h3><a class="artlnk" href="#arthro-'+a.id+'" data-go>'+esc(a.title)+'</a></h3><p class="arttext">'+esc(ex(X))+'</p></div></article>'}
+function card(a){var p=(a.photos||[])[0],X=a.html!=null?exh(a.html):a.text;return '<article class="artcard live'+(a.pin?' pinned':'')+'" data-type="'+esc(a.type)+'"><div class="artimg">'+(p?'<img src="'+ph(p,1)+'" alt="" loading="lazy" decoding="async">':PIC)+'<span class="arttag">'+esc(a.type)+'</span>'+(a.pin?PIN:'')+(vids(a).length?'<span class="vbadge" role="img" aria-label="Με βίντεο" title="Με βίντεο">'+PLAY+'</span>':'')+'</div><div class="artbody"><p class="artdate">'+CAL+esc(fmt(a.date))+'</p><h3><a class="artlnk" href="#arthro-'+a.id+'" data-go>'+esc(a.title)+'</a></h3><p class="arttext">'+esc(ex(X))+'</p></div></article>'}
 function news(){
  if(!A.length)return; /* χωρίς άρθρα μένουν οι ενδεικτικές κάρτες */
  var list=A.filter(function(a){return filt==='Όλα'||a.type===filt});
@@ -1370,7 +1380,7 @@ function news(){
  if(!more){more=document.createElement('div');more.className='nmore';more.innerHTML='<button type="button" class="rbtn ghostd">Περισσότερα</button>';grid.parentNode.appendChild(more);more.addEventListener('click',function(){shown+=PAGE;news()})}
  more.hidden=list.length<=shown;
 }
-/* Αρχική: «Τα Νέα μας» με τις 3 πιο πρόσφατες αναρτήσεις. Χωρίς αναρτήσεις η ενότητα αφαιρείται (στην προεπισκόπηση δείχνει τις ενδεικτικές κάρτες). */
+/* Αρχική: «Τα Νέα μας» με τις 3 πρώτες αναρτήσεις (οι καρφιτσωμένες πρώτες, μετά οι πιο πρόσφατες). Χωρίς αναρτήσεις η ενότητα αφαιρείται (στην προεπισκόπηση δείχνει τις ενδεικτικές κάρτες). */
 (function(){var hs=document.getElementById('a-nea'),hg=hs&&hs.querySelector('.hnews');if(!hg)return;
  var L=A.length?A.slice(0,3).map(card):(window.claude?[].slice.call(grid.querySelectorAll('.artcard')).slice(0,3).map(function(c){return c.outerHTML}):[]);
  if(!L.length){hs.parentNode.removeChild(hs);return}
