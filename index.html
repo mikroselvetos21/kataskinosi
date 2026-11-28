@@ -1060,6 +1060,21 @@ details.q .a p,details.q .a li{max-width:80ch}
  .sidewrap .sidecar::after{content:none}
  .sidewrap .sidecar .side{flex:0 0 100%;aspect-ratio:4/3;border-radius:0}
 }
+
+/* ===== Κινητό: φίλτρα «Τα Νέα μας» σε μία γραμμή, footer με τις δύο λίστες δίπλα-δίπλα, κουμπί χάρτη σε μία γραμμή ===== */
+@media (max-width:560px){
+ .nfilt{flex-wrap:nowrap;gap:6px}
+ .nfilt button{flex:none;min-height:40px;padding:7px 12px;font-size:.9rem}
+ .fgrid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:34px 14px}
+ .fgrid>.fcol:not(.fcontact) li{font-size:.95em}
+ .fgrid>.fbrand,.fgrid>.fcontact{grid-column:1/-1}
+ .view .cmap .mapbtn .btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:11px 14px;font-size:.88rem;white-space:nowrap;box-sizing:border-box}
+}
+@media (max-width:380px){
+ .nfilt{gap:4px}
+ .nfilt button{padding:6px 9px;font-size:.84rem}
+ .view .cmap .mapbtn .btn{padding:10px 10px;font-size:.8rem}
+}
 </style>
 </head>
 <body>
